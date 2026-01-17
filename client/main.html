@@ -11,7 +11,25 @@
 <body>
     <!--svg background-->
     <svg id="svg-background" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+        
         <defs>
+            <!--background gradient-->
+            <linearGradient id="nightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#0a0e23;stop-opacity:1">
+                    <animate attributeName="stop-color"
+                            values="#0a0e23;#0d1b3a;#0a0e23"
+                            dur="60s"
+                            repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" style="stop-color:#131e47;stop-opacity:1">
+                    <animate attributeName="stop-color"
+                            values="#1a2345;#2a355a;#1a2345"
+                            dur="60s"
+                            repeatCount="indefinite"/>
+                </stop>
+            </linearGradient>
+
+
             <!--fill color of the first wave-->
             <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:1">
@@ -23,6 +41,11 @@
                 </stop>
             </linearGradient>
         </defs>
+
+        <!--background rect-->
+        <rect width="1920" height="1080" fill="url(#nightGrad)"/>
+
+        <!--path of the first wave-->
         <path d="M -200 650 Q 800 600, 1920 800 L 1920 1200 L -200 1200 Z" fill="url(#orangeGrad)" opacity="0.95">
             <animate attributeName="d" 
                      values="M -200 650 Q 800 600, 1920 800 L 1920 1200 L -200 1200 Z;
@@ -32,8 +55,9 @@
                      repeatCount="indefinite"/>
         </path>
 
-    </svg>
 
+    </svg>
+    
     <!--div main with content of the page-->
 
     <script src="script-main.js"></script>
