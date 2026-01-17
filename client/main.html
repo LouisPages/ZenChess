@@ -14,23 +14,19 @@
         
         <defs>
             <!--background gradient-->
-            <linearGradient id="nightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#0a0e23;stop-opacity:1">
+            <linearGradient id="nightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#080c1d;stop-opacity:1">
                     <animate attributeName="stop-color"
                             values="#0a0e23;#0d1b3a;#0a0e23"
                             dur="60s"
                             repeatCount="indefinite"/>
                 </stop>
                 <stop offset="100%" style="stop-color:#131e47;stop-opacity:1">
-                    <animate attributeName="stop-color"
-                            values="#1a2345;#2a355a;#1a2345"
-                            dur="60s"
-                            repeatCount="indefinite"/>
+                    
                 </stop>
             </linearGradient>
 
-
-            <!--fill color of the first wave-->
+            <!--fill color of the first curve-->
             <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:1">
                     <animate attributeName="stop-color" values="#ff8c00;#ffa500;#ff8c00" dur="10s" repeatCount="indefinite"/>
@@ -40,6 +36,9 @@
                     <animate attributeName="stop-color" values="#d35400;#e67e22;#d35400" dur="10s" repeatCount="indefinite"/>
                 </stop>
             </linearGradient>
+
+            
+        </path>
         </defs>
 
         <!--background rect-->
@@ -55,9 +54,19 @@
                      repeatCount="indefinite"/>
         </path>
 
+        <!--second curve-->
+        <path d="M -100 750 Q 900 700, 1920 880 L 1920 1200 L -100 1200 Z" 
+              fill="#c87333" opacity="0.4">
+        <animate attributeName="d" 
+                 values="M -100 750 Q 900 700, 1920 880 L 1920 1200 L -100 1200 Z;
+                         M -100 760 Q 920 690, 1920 890 L 1920 1200 L -100 1200 Z;
+                         M -100 750 Q 900 700, 1920 880 L 1920 1200 L -100 1200 Z" 
+                 dur="20s" 
+                 repeatCount="indefinite"/>
+
 
     </svg>
-    
+
     <!--div main with content of the page-->
 
     <script src="script-main.js"></script>
