@@ -1,0 +1,187 @@
+#sky {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.constellation {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  aspect-ratio: 1/1;
+  transform-origin: center center;
+  animation: rotate 1000s infinite linear;
+  z-index: 0;
+}
+
+.star {
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  animation-name: star;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  z-index: 0;
+}
+
+.star.style1 { animation-duration: 0.5s; animation-name: star; }
+.star.style2 { animation-duration: 1s; animation-name: star; }
+.star.style3 { animation-duration: 1.5s; animation-name: star; }
+.star.style4 { animation-duration: 2s; animation-name: starHighlighted; }
+
+.star.size1 { width: 1px; height: 1px; }
+.star.size2 { width: 2px; height: 2px; }
+.star.size3 { width: 3px; height: 3px; }
+
+.star.opacity1 { opacity: 1; }
+.star.opacity2 { opacity: .5; }
+.star.opacity3 { opacity: .1; }
+
+.shooting-star {
+  position: absolute;
+  background-color: #fff;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  transform: rotate(-35deg);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  z-index: 0;
+}
+
+.shooting-star:before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  width: 0;
+  height: 0;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  border-left: 85px solid white;
+  position: absolute;
+  left: 2px;
+  top: 0;
+}
+
+.shooting-star.style1 { animation-name: shootingStarStyle1; }
+.shooting-star.style2 { animation-name: shootingStarStyle2; }
+.shooting-star.style3 { animation-name: shootingStarStyle3; }
+.shooting-star.style4 { animation-name: shootingStarStyle4; }
+
+.moon {
+  position: absolute;
+  right: 100px;
+  top: 50px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow: 0 0 160px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
+  background-color: #fff;
+  animation-name: moon;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 10s;
+  z-index: 0;
+}
+
+.moon .texture {
+  background-image: url(https://raw.githubusercontent.com/interaminense/starry-sky/master/src/img/bgMoon.png);
+  background-position: center;
+  background-size: 100%;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0.4;
+}
+
+@keyframes star {
+  0% {
+    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes starHighlighted {
+  0% {
+    background-color: #FFFFFF;
+    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 1);
+  }
+  20% {
+    background-color: #FFC4C4;
+    box-shadow: 0 0 10px 0px rgb(255, 196, 196, 1);
+  }
+  80% {
+    background-color: #C4CFFF;
+    box-shadow: 0 0 10px 0px rgb(196, 207, 255, 1);
+  }
+  100% {
+    background-color: #FFFFFF;
+    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes shootingStarStyle1 {
+  0% { opacity: 0; right: 300px; top: 100px; }
+  30% { opacity: .3; }
+  60% { opacity: .3; }
+  100% { opacity: 0; right: 1000px; top: 600px; }
+}
+
+@keyframes shootingStarStyle2 {
+  0% { opacity: 0; right: 700px; top: 100px; }
+  30% { opacity: 1; }
+  60% { opacity: 1; }
+  100% { opacity: 0; right: 1400px; top: 600px; }
+}
+
+@keyframes shootingStarStyle3 {
+  0% { opacity: 0; right: 300px; top: 300px; }
+  30% { opacity: 1; }
+  60% { opacity: 1; }
+  100% { opacity: 0; right: 1000px; top: 800px; }
+}
+
+@keyframes shootingStarStyle4 {
+  0% { opacity: 0; right: 700px; top: 300px; }
+  30% { opacity: 1; }
+  60% { opacity: 1; }
+  100% { opacity: 0; right: 1400px; top: 800px; }
+}
+
+@keyframes moon {
+  0% {
+    box-shadow: 0 0 160px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
+  }
+  50% {
+    box-shadow: 0 0 80px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
+  }
+  100% {
+    box-shadow: 0 0 160px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

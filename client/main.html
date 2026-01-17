@@ -6,26 +6,24 @@
     
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="style-main.css">
+    <link rel="stylesheet" type="text/css" href="starry-sky/starry-sky-style.css">
 
 </head>
 <body>
-    <!--svg background-->
+
+    <!--starry sky - credits: https://codepen.io/interaminense/pen/QyGbXL -->
+    <div id="sky">
+        <div class="constellation"></div>
+        <div class="moon">
+            <div class="texture"></div>
+        </div>
+        <div class="shooting-stars"></div>
+    </div>
+
+    <!--svg containing the background and the curves-->
     <svg id="svg-background" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
         
         <defs>
-            <!--background gradient-->
-            <linearGradient id="nightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#080c1d;stop-opacity:1">
-                    <!-- <animate attributeName="stop-color"
-                            values="#0a0e23;#0d1b3a;#0a0e23"
-                            dur="60s"
-                            repeatCount="indefinite"/> -->
-                </stop>
-                <stop offset="100%" style="stop-color:#121b3d;stop-opacity:1">
-
-                </stop>
-            </linearGradient>
-
             <!--fill color of the first curve-->
             <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:1">
@@ -38,10 +36,7 @@
             </linearGradient>
         </defs>
 
-        <!--background rect-->
-        <rect width="1920" height="1080" fill="url(#nightGrad)"/>
-
-        <!--path of the first wave-->
+        <!--path of the first curve-->
         <path d="M -200 650 Q 800 600, 1920 800 L 1920 1200 L -200 1200 Z" fill="url(#orangeGrad)" opacity="0.95">
             <animate attributeName="d" 
                      values="M -200 650 Q 800 600, 1920 800 L 1920 1200 L -200 1200 Z;
@@ -52,8 +47,7 @@
         </path>
 
         <!--second curve-->
-        <path d="M -100 750 Q 900 700, 1920 880 L 1920 1200 L -100 1200 Z" 
-              fill="#c87333" opacity="0.4">
+        <path d="M -100 750 Q 900 700, 1920 880 L 1920 1200 L -100 1200 Z" fill="#c87333" opacity="0.4">
             <animate attributeName="d" 
                     values="M -100 750 Q 900 700, 1920 880 L 1920 1200 L -100 1200 Z;
                             M -100 760 Q 920 690, 1920 890 L 1920 1200 L -100 1200 Z;
@@ -61,27 +55,14 @@
                     dur="20s" 
                     repeatCount="indefinite"/>
         </path>
-
-        <g opacity="1">
-            <circle cx="150" cy="100" r="1" fill="#fff">
-                <animate attributeName="opacity" values="0.3;1;0.3" dur="4s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="300" cy="180" r="1.5" fill="#fff">
-                <animate attributeName="opacity" values="0.4;0.9;0.4" dur="5s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="450" cy="80" r="1" fill="#fff">
-                <animate attributeName="opacity" values="0.2;0.8;0.2" dur="6s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="600" cy="150" r="1.5" fill="#fff">
-                <animate attributeName="opacity" values="0.5;1;0.5" dur="3.5s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="800" cy="120" r="1" fill="#fff">
-                <animate attributeName="opacity" values="0.3;0.9;0.3" dur="5.5s" repeatCount="indefinite"/>
-            </circle>
-        </g>
     </svg>
 
-    <!--div main with content of the page-->
+
+    <!--chess board-->
+    <div id="board-container">
+
+    </div>
 
     <script src="script-main.js"></script>
+    <script src="starry-sky/starry-sky-script.js"></script>
 </body>
