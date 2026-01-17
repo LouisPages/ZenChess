@@ -36,6 +36,13 @@ svg background
     height: 100%;
 }
 
+
+/*-----------------------------------
+chess board
+-----------------------------------*/
+
+
+
 #board-container {
     position: fixed;
     top: 50%;
@@ -43,7 +50,59 @@ svg background
     transform: translate(-50%, -50%);
     width: 600px;
     aspect-ratio: 1/1;
-    background-color: white;
-    opacity: 0.5;
-    z-index: 4;
+    box-shadow: 0 0 10px white;
+    background: rgba(26, 20, 16, 0.3);
+    border-radius: 1%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 74px);
+    grid-template-rows: repeat(8, 74px);
+    gap: 0;
+}
+
+.square-bright {
+    background-color: #dbb17d;
+}
+
+.square-dark {
+    background-color: #945508;
+}
+
+#square00 {
+    border-top-left-radius: 3%;
+}
+
+#square07 {
+    border-top-right-radius: 3%;
+}
+
+#square70 {
+    border-bottom-left-radius: 3%;
+}
+
+#square77 {
+    border-bottom-right-radius: 3%;
+}
+
+.square {
+    font-size: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.prevent-select {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
