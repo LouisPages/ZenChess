@@ -74,19 +74,19 @@ chess board
     background-color: #945508;
 }
 
-#square00 {
+#square-00 {
     border-top-left-radius: 3%;
 }
 
-#square07 {
+#square-07 {
     border-top-right-radius: 3%;
 }
 
-#square70 {
+#square-70 {
     border-bottom-left-radius: 3%;
 }
 
-#square77 {
+#square-77 {
     border-bottom-right-radius: 3%;
 }
 
@@ -109,4 +109,8 @@ chess board
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.allowed-move {
+    color: #121b3d;
 }

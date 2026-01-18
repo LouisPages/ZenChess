@@ -2,8 +2,8 @@
 function possibleMoves() {
     let dicMoves = {};
 
-    for (i = 0; i < 8; i++) {
-        for (j = 0; j < 8; j++) {
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
             let moves = [];
 
             if (curBoard[i][j][0] === '♜') {
@@ -39,7 +39,6 @@ function possibleMoves() {
                         moves.push([i-1,j]);
                         if (curBoard[i][j][2] && curBoard[i-2][j][0] === '') {
                             moves.push([i-2,j]);
-                            curBoard[i][j][2] = false;
                         }
                     }
                 }
@@ -48,7 +47,6 @@ function possibleMoves() {
                         moves.push([i+1,j]);
                         if (curBoard[i][j][2] && curBoard[i+2][j][0] === '') {
                             moves.push([i+2,j]);
-                            curBoard[i][j][2] = false;
                         }
                     }
                 }
@@ -161,6 +159,5 @@ function possibleMoves() {
             dicMoves[[i,j]] = moves;
         }
     }
-    console.log(dicMoves);
     return dicMoves;
 }
