@@ -1,14 +1,13 @@
 let curBoard = [
-    ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
-    ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
-    ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜']
+    [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♛', 'b'], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+    [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
-
 
 
 //create the board with empty cases
@@ -32,14 +31,15 @@ function initPieces() {
         for (j = 0; j < 8; j++) {
             divPiece = document.getElementById("square" + String(i) + String(j));
             if (i === 6 || i === 7) {
-                divPiece.innerHTML = "<span class='prevent-select' style='color: white;'>" + curBoard[i][j] + "</span>";
+                divPiece.innerHTML = "<span class='prevent-select white-piece'>" + curBoard[i][j][0] + "</span>";
             }
             else {
-                divPiece.innerHTML = "<span class='prevent-select'>" + curBoard[i][j] + "</span>";
+                divPiece.innerHTML = "<span class='prevent-select'>" + curBoard[i][j][0] + "</span>";
             }
-            if (curBoard[i][j] != '') divPiece.classList.add("pointer");
+            if (curBoard[i][j] != '' ) divPiece.classList.add("pointer");
         }
     }
+    truc = possibleMoves();
 }
 
 window.onload = initBoard();

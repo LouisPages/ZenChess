@@ -97,6 +97,10 @@ chess board
     justify-content: center;
 }
 
+.white-piece {
+    color: white;
+}
+
 .pointer:hover {
     cursor: pointer;
 }
