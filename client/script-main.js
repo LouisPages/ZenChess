@@ -9,6 +9,8 @@ let curBoard = [
     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
 let whoseTurn = 'w';
+let shownMoves = [];
+let toMove = [];
 
 
 //create the board with empty cases
@@ -47,65 +49,66 @@ function refreshBoard() {
     }
 }
 
-function playTurn(whoseTurn) {
-    console.log(whoseTurn);
-    let shownMoves = [];
-    document.addEventListener('click', function(clicked) {
-        //erase precedent legal moves that might have been displayed
-        for (let x of shownMoves) {
-            let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
-            divSquare.innerHTML = "";
-            divSquare.classList.remove("pointer");
-        }
-        
-        //make legal moves appear if what has been clicked is a piece
-        if (clicked.target.id.slice(0,5) === 'piece') {
-            //check that the clicked piece belongs to the player whose turn it is to play
-            if (clicked.target.id[6] === whoseTurn) {
-                let i = clicked.target.id[7];
-                let j = clicked.target.id[8];
-                let dicMoves = possibleMoves();
+//erase legal moves that might have been displayed
+function clearShownLegalMoves() {
+    for (let x of shownMoves) {
+        let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
+        divSquare.innerHTML = "";
+        divSquare.classList.remove("pointer");
+        divSquare.classList.remove("allowed-move");
+    }
+    shownMoves = [];
+}
 
-                shownMoves = dicMoves[[i,j]];
+
+document.addEventListener('click', function(clicked) {
+        clearShownLegalMoves();
+
+        let dicMoves = possibleMoves();
+        let i = clicked.target.id[7];
+        let j = clicked.target.id[8];
+        shownMoves = dicMoves[[i,j]];
+        
+        if (clicked.target.classList.contains("allowed-move")) {
+            //a legal square has been clicked on : move the piece to this square
+            let piece = curBoard[toMove[0]][toMove[1]][0];
+            if (piece === '♟') {
+                curBoard[i][j] = ['♟', whoseTurn, false];
+            }
+            else {
+                curBoard[i][j] = [piece, whoseTurn];
+            }
+            
+            //remove the piece to its original square
+            curBoard[toMove[0]][toMove[1]] = [''];
+
+            toMove = [];
+            
+            //refresh the board
+            refreshBoard();
+            checkCheckMate();
+            whoseTurn = nextPlayer(whoseTurn);
+            console.log(whoseTurn);
+        }
+        else {      
+            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
+                //make legal moves appear if what has been clicked is a piece of the player whose turn is to play
                 for (let x of dicMoves[[i,j]]) {
                     let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
                     divSquare.innerHTML = "<span class='prevent-select allowed-move' id='piece-" + whoseTurn + String(x[0]) + String(x[1]) + "'>•</span>";
                     divSquare.classList.add("pointer");
+                    divSquare.classList.add("allowed-move");
                 }
-
-                document.addEventListener('click', function(chosenMove) {
-                    //a move has been chosen by the player
-                    let newi = chosenMove.target.id[7];
-                    let newj = chosenMove.target.id[8];
-                    
-                    if (JSON.stringify(dicMoves[[i,j]]).includes(JSON.stringify([parseInt(newi),parseInt(newj)]))) {
-                        console.log("coucou");
-                        //move it to its new square
-                        let piece = curBoard[i][j][0];
-                        if (piece === '♟') {
-                            curBoard[newi][newj] = ['♟', whoseTurn, false];
-                        }
-                        else {
-                            curBoard[newi][newj] = [piece, whoseTurn];
-                        }
-
-                        //remove the piece to its original square
-                        curBoard[i][j] = [''];
-
-                        //refresh the board
-                        refreshBoard();
-                        checkCheckMate();
-                        playTurn(nextPlayer(whoseTurn));
-                    }
-                })
+                toMove = [i,j];
             }
         }
-    });
-}
+            
+        
+});
 
 //change player turn
 function nextPlayer(whoseTurn) {
-    return whoseTurn === 'w' ? 'b' : 'w';
+    return whoseTurn === 'w' ? 'b' : 'w'
 }
 
 function checkCheckMate() {
@@ -115,8 +118,6 @@ function checkCheckMate() {
 function main() {
     initBoard();
     refreshBoard();
-
-    playTurn(whoseTurn);
 }
 
 window.onload = main();
