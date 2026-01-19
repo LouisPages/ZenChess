@@ -112,5 +112,13 @@ chess board
 }
 
 .allowed-move {
-    color: #121b3d;
+    background-color: white;
+    width: 74px;
+    height: 74px;
+    opacity: 0.3;
+    transition: 0.5s ease;
+}
+
+.allowed-move:hover {
+    opacity: 0.8;
 }

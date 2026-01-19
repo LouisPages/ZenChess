@@ -10,7 +10,7 @@ function init() {
     
     //generate stars
     var starsHTML = "";
-    var starsCount = 2000;
+    var starsCount = 1500;
     var night = document.querySelector(".constellation");
     var windowWidth = window.innerWidth;
     

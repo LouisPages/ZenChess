@@ -11,6 +11,8 @@ let curBoard = [
 let whoseTurn = 'w';
 let shownMoves = [];
 let toMove = [];
+let tabPieces = ['♜','♛', '♚', '♝', '♞', '♟'];
+let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
 
 
 //create the board with empty cases
@@ -60,6 +62,41 @@ function clearShownLegalMoves() {
     shownMoves = [];
 }
 
+function makeMove (i,j) {
+    let piece = curBoard[toMove[0]][toMove[1]][0];
+    if (piece === '♟') {
+        curBoard[i][j] = ['♟', whoseTurn, false];
+    }
+    else if (piece === '♚') {
+        curBoard[i][j] = [piece, whoseTurn];
+        //castle right
+        if (j - toMove[1] === 2) {
+            
+            curBoard[toMove[0]][parseInt(toMove[1])+1] = ['♜', whoseTurn]; //!!toMove[1] + 1 gives "toMove[1]1" cause toMove[1] is a string
+            curBoard[toMove[0]][7] = [''];
+            castle[whoseTurn + 'right'] = false;
+        }
+        //castle left
+        else if (j - toMove[1] === -2) {
+            curBoard[toMove[0]][parseInt(toMove[1])-1] = ['♜', whoseTurn];
+            curBoard[toMove[0]][0] = [''];
+            castle[whoseTurn + 'left'] = false;
+        }
+        //normal move that then prevents castling
+        else {
+            castle[whoseTurn + 'left'] = false;
+            castle[whoseTurn + 'right'] = false;
+        }
+    }
+    else {
+        curBoard[i][j] = [piece, whoseTurn];
+    }
+            
+    //remove the piece from its original square
+    curBoard[toMove[0]][toMove[1]] = [''];
+
+    toMove = [];
+}
 
 document.addEventListener('click', function(clicked) {
         clearShownLegalMoves();
@@ -71,31 +108,19 @@ document.addEventListener('click', function(clicked) {
         
         if (clicked.target.classList.contains("allowed-move")) {
             //a legal square has been clicked on : move the piece to this square
-            let piece = curBoard[toMove[0]][toMove[1]][0];
-            if (piece === '♟') {
-                curBoard[i][j] = ['♟', whoseTurn, false];
-            }
-            else {
-                curBoard[i][j] = [piece, whoseTurn];
-            }
-            
-            //remove the piece to its original square
-            curBoard[toMove[0]][toMove[1]] = [''];
-
-            toMove = [];
+            makeMove(i,j);
             
             //refresh the board
             refreshBoard();
             checkCheckMate();
             whoseTurn = nextPlayer(whoseTurn);
-            console.log(whoseTurn);
         }
         else {      
             if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
-                //make legal moves appear if what has been clicked is a piece of the player whose turn is to play
+                //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
                 for (let x of dicMoves[[i,j]]) {
                     let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
-                    divSquare.innerHTML = "<span class='prevent-select allowed-move' id='piece-" + whoseTurn + String(x[0]) + String(x[1]) + "'>•</span>";
+                    divSquare.innerHTML = "<span class='prevent-select allowed-move' id='piece-" + whoseTurn + String(x[0]) + String(x[1]) + "'></span>";
                     divSquare.classList.add("pointer");
                     divSquare.classList.add("allowed-move");
                 }

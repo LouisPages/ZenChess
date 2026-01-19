@@ -41,6 +41,12 @@ function possibleMoves() {
                             moves.push([i-2,j]);
                         }
                     }
+                    if (tabPieces.includes(curBoard[i-1][j+1])) {
+                        moves.push([i-1,j+1])
+                    }
+                    if (tabPieces.includes(curBoard[i-1][j-1])) {
+                        moves.push([i-1,j-1])
+                    }
                 }
                 else {
                     if (i < 7 && curBoard[i+1][j][0] === '') {
@@ -49,6 +55,16 @@ function possibleMoves() {
                             moves.push([i+2,j]);
                         }
                     }
+                    try {
+                        if (tabPieces.includes(curBoard[i-1][j+1])) {
+                            moves.push([i-1,j+1])
+                        }
+                    } catch(err) {console.log("no" + err);}
+                    try {
+                        if (tabPieces.includes(curBoard[i-1][j-1])) {
+                            moves.push([i-1,j-1])
+                        }
+                    } catch(err) {console.log("no" + err);}
                 }
             }
 
@@ -152,6 +168,24 @@ function possibleMoves() {
                     let nj = kingMoves[k][1];
                     if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8 && curBoard[ni][nj][0] === '') {
                         moves.push([ni,nj]);
+                    }
+                }
+                //castle for white
+                if (curBoard[i][j][1] === 'w' && i === 7 && j === 4) {
+                    if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜') {
+                        moves.push([i,j+2]);
+                    }
+                    if (castle['wleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜') {
+                        moves.push([i,j-2]);
+                    }
+                }
+                //castle for black
+                if (curBoard[i][j][1] === 'b' && i === 0 && j === 4) {
+                    if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜') {
+                        moves.push([i,j+2]);
+                    }
+                    if (castle['bleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜') {
+                        moves.push([i,j-2]);
                     }
                 }
             }
