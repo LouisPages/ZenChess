@@ -8,28 +8,32 @@ function possibleMoves() {
 
             if (curBoard[i][j][0] === '♜') {
                 for (k = i+1; k < 8; k++) {
-                    if (curBoard[k][j][0] === '') {
-                        moves.push([k,j]);
+                    if (curBoard[k][j][0] === '') moves.push([k,j]);
+                    else {
+                        if (curBoard[k][j][1] != whoseTurn) moves.push([k,j]);
+                        break;
                     }
-                    else break;
                 }
                 for (k = i-1; k >= 0; k--) {
-                    if (curBoard[k][j][0] === '') {
-                        moves.push([k,j]);
+                    if (curBoard[k][j][0] === '') moves.push([k,j]);
+                    else {
+                        if (curBoard[k][j][1] != whoseTurn) moves.push([k,j]);
+                        break;
                     }
-                    else break;
                 }
                 for (k = j+1; k < 8; k++) {
-                    if (curBoard[i][k][0] === '') {
-                        moves.push([i,k]);
+                    if (curBoard[i][k][0] === '') moves.push([i,k]);
+                    else {
+                        if (curBoard[i][k][1] != whoseTurn) moves.push([i,k]);
+                        break;
                     }
-                    else break;
                 }
                 for (k = j-1; k >= 0; k--) {
-                    if (curBoard[i][k][0] === '') {
-                        moves.push([i,k]);
+                    if (curBoard[i][k][0] === '') moves.push([i,k]);
+                    else {
+                        if (curBoard[i][k][1] != whoseTurn) moves.push([i,k]);
+                        break;
                     }
-                    else break;
                 }
             }
 
@@ -41,11 +45,11 @@ function possibleMoves() {
                             moves.push([i-2,j]);
                         }
                     }
-                    if (tabPieces.includes(curBoard[i-1][j+1])) {
-                        moves.push([i-1,j+1])
+                    if (i-1 >= 0 && j-1 >= 0 && tabPieces.includes(curBoard[i-1][j-1][0]) && curBoard[i-1][j-1][1] === 'b') {
+                        moves.push([i-1,j-1]);
                     }
-                    if (tabPieces.includes(curBoard[i-1][j-1])) {
-                        moves.push([i-1,j-1])
+                    if (i-1 >=0 && j+1 <= 7 && tabPieces.includes(curBoard[i-1][j+1][0]) && curBoard[i-1][j+1][1] === 'b') {
+                        moves.push([i-1,j+1]);
                     }
                 }
                 else {
@@ -55,16 +59,12 @@ function possibleMoves() {
                             moves.push([i+2,j]);
                         }
                     }
-                    try {
-                        if (tabPieces.includes(curBoard[i-1][j+1])) {
-                            moves.push([i-1,j+1])
-                        }
-                    } catch(err) {console.log("no" + err);}
-                    try {
-                        if (tabPieces.includes(curBoard[i-1][j-1])) {
-                            moves.push([i-1,j-1])
-                        }
-                    } catch(err) {console.log("no" + err);}
+                    if (i+1 <= 7 && j-1 >= 0 && tabPieces.includes(curBoard[i+1][j-1][0]) && curBoard[i+1][j-1][1] === 'w') {
+                        moves.push([i+1,j-1]);
+                    }
+                    if (i+1 <= 7 && j+1 <= 7 && tabPieces.includes(curBoard[i+1][j+1][0]) && curBoard[i+1][j+1][1] === 'w') {
+                        moves.push([i+1,j+1]);
+                    }
                 }
             }
 
@@ -74,7 +74,7 @@ function possibleMoves() {
                 for (k = 0; k < knightMoves.length; k++) {
                     let ni = knightMoves[k][0];
                     let nj = knightMoves[k][1];
-                    if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8 && curBoard[ni][nj][0] === '') {
+                    if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8 && (curBoard[ni][nj][0] === '' || (curBoard[ni][nj] != '' && curBoard[ni][nj][1] != whoseTurn))) {
                         moves.push([ni,nj]);
                     }
                 }
@@ -82,81 +82,109 @@ function possibleMoves() {
 
             else if (curBoard[i][j][0] === '♝') {
                 for (k = 1; i+k < 8 && j+k < 8; k++) {
-                    if (curBoard[i+k][j+k][0] === '') {
-                        moves.push([i+k,j+k]);
+                    if (curBoard[i+k][j+k][0] === '') moves.push([i+k,j+k]);
+                    else {
+                        if (curBoard[i+k][j+k][1] != whoseTurn) {
+                            moves.push([i+k,j+k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
                 for (k = 1; i+k < 8 && j-k >= 0; k++) {
-                    if (curBoard[i+k][j-k][0] === '') {
-                        moves.push([i+k,j-k]);
+                    if (curBoard[i+k][j-k][0] === '') moves.push([i+k,j-k]);
+                    else {
+                        if (curBoard[i+k][j-k][1] != whoseTurn) {
+                            moves.push([i+k,j-k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
                 for (k = 1; i-k >= 0 && j+k < 8; k++) {
-                    if (curBoard[i-k][j+k][0] === '') {
-                        moves.push([i-k,j+k]);
+                    if (curBoard[i-k][j+k][0] === '') moves.push([i-k,j+k]);
+                    else {
+                        if (curBoard[i-k][j+k][1] != whoseTurn) {
+                            moves.push([i-k,j+k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
                 for (k = 1; i-k >= 0 && j-k >= 0; k++) {
-                    if (curBoard[i-k][j-k][0] === '') {
-                        moves.push([i-k,j-k]);
+                    if (curBoard[i-k][j-k][0] === '') moves.push([i-k,j-k]);
+                    else {
+                        if (curBoard[i-k][j-k][1] != whoseTurn) {
+                            moves.push([i-k,j-k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
             }
             else if (curBoard[i][j][0] === '♛') {
                 //rook-like moves
                 for (k = i+1; k < 8; k++) {
-                    if (curBoard[k][j][0] === '') {
-                        moves.push([k,j]);
+                    if (curBoard[k][j][0] === '') moves.push([k,j]);
+                    else {
+                        if (curBoard[k][j][1] != whoseTurn) moves.push([k,j]);
+                        break;
                     }
-                    else break;
                 }
                 for (k = i-1; k >= 0; k--) {
-                    if (curBoard[k][j][0] === '') {
-                        moves.push([k,j]);
+                    if (curBoard[k][j][0] === '') moves.push([k,j]);
+                    else {
+                        if (curBoard[k][j][1] != whoseTurn) moves.push([k,j]);
+                        break;
                     }
-                    else break;
                 }
                 for (k = j+1; k < 8; k++) {
-                    if (curBoard[i][k][0] === '') {
-                        moves.push([i,k]);
+                    if (curBoard[i][k][0] === '') moves.push([i,k]);
+                    else {
+                        if (curBoard[i][k][1] != whoseTurn) moves.push([i,k]);
+                        break;
                     }
-                    else break;
                 }
                 for (k = j-1; k >= 0; k--) {
-                    if (curBoard[i][k][0] === '') {
-                        moves.push([i,k]);
+                    if (curBoard[i][k][0] === '') moves.push([i,k]);
+                    else {
+                        if (curBoard[i][k][1] != whoseTurn) moves.push([i,k]);
+                        break;
                     }
-                    else break;
                 }
 
                 //bishop-like moves
                 for (k = 1; i+k < 8 && j+k < 8; k++) {
-                    if (curBoard[i+k][j+k][0] === '') {
-                        moves.push([i+k,j+k]);
+                    if (curBoard[i+k][j+k][0] === '') moves.push([i+k,j+k]);
+                    else {
+                        if (curBoard[i+k][j+k][1] != whoseTurn) {
+                            moves.push([i+k,j+k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
                 for (k = 1; i+k < 8 && j-k >= 0; k++) {
-                    if (curBoard[i+k][j-k][0] === '') {
-                        moves.push([i+k,j-k]);
+                    if (curBoard[i+k][j-k][0] === '') moves.push([i+k,j-k]);
+                    else {
+                        if (curBoard[i+k][j-k][1] != whoseTurn) {
+                            moves.push([i+k,j-k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
                 for (k = 1; i-k >= 0 && j+k < 8; k++) {
-                    if (curBoard[i-k][j+k][0] === '') {
-                        moves.push([i-k,j+k]);
+                    if (curBoard[i-k][j+k][0] === '') moves.push([i-k,j+k]);
+                    else {
+                        if (curBoard[i-k][j+k][1] != whoseTurn) {
+                            moves.push([i-k,j+k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
                 for (k = 1; i-k >= 0 && j-k >= 0; k++) {
-                    if (curBoard[i-k][j-k][0] === '') {
-                        moves.push([i-k,j-k]);
+                    if (curBoard[i-k][j-k][0] === '') moves.push([i-k,j-k]);
+                    else {
+                        if (curBoard[i-k][j-k][1] != whoseTurn) {
+                            moves.push([i-k,j-k]);
+                        }
+                        break;
                     }
-                    else break;
                 }
             }
 

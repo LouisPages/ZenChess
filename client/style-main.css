@@ -91,7 +91,7 @@ chess board
 }
 
 .square {
-    font-size: 60px;
+    font-size: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,7 +112,7 @@ chess board
 }
 
 .allowed-move {
-    background-color: white;
+    background-color: rgb(165, 157, 157);
     width: 74px;
     height: 74px;
     opacity: 0.3;

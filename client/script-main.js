@@ -21,7 +21,7 @@ function initBoard() {
     let colorSquare = {0: "bright", 1: "dark"};
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j+=2) {
-            squares += "<div class='square selected-square square-" + colorSquare[(i+j) % 2] + "' id='square-" + String(i) + String(j) + "'></div>\n";
+            squares += "<div class='square square-" + colorSquare[(i+j) % 2] + "' id='square-" + String(i) + String(j) + "'></div>\n";
             squares += "<div class='square square-" + colorSquare[(i+1+j) % 2] + "' id='square-" + String(i) + String(j+1) + "'></div>\n";
         }
     }
@@ -55,7 +55,7 @@ function refreshBoard() {
 function clearShownLegalMoves() {
     for (let x of shownMoves) {
         let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
-        divSquare.innerHTML = "";
+        // divSquare.innerHTML = "";
         divSquare.classList.remove("pointer");
         divSquare.classList.remove("allowed-move");
     }
@@ -71,7 +71,6 @@ function makeMove (i,j) {
         curBoard[i][j] = [piece, whoseTurn];
         //castle right
         if (j - toMove[1] === 2) {
-            
             curBoard[toMove[0]][parseInt(toMove[1])+1] = ['♜', whoseTurn]; //!!toMove[1] + 1 gives "toMove[1]1" cause toMove[1] is a string
             curBoard[toMove[0]][7] = [''];
             castle[whoseTurn + 'right'] = false;
@@ -99,8 +98,10 @@ function makeMove (i,j) {
 }
 
 document.addEventListener('click', function(clicked) {
-        clearShownLegalMoves();
+    clearShownLegalMoves();
+    refreshBoard();
 
+    if (['piece','squar'].includes(clicked.target.id.slice(0,5))) {
         let dicMoves = possibleMoves();
         let i = clicked.target.id[7];
         let j = clicked.target.id[8];
@@ -118,17 +119,20 @@ document.addEventListener('click', function(clicked) {
         else {      
             if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
+                console.log(dicMoves[[i,j]]);
                 for (let x of dicMoves[[i,j]]) {
+                    console.log(x);
                     let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
-                    divSquare.innerHTML = "<span class='prevent-select allowed-move' id='piece-" + whoseTurn + String(x[0]) + String(x[1]) + "'></span>";
+                    divSquare.innerHTML = "<span class='square prevent-select allowed-move' id='piece-" + whoseTurn + String(x[0]) + String(x[1]) + "'>" + curBoard[String(x[0])][String(x[1])][0] + "</span>";
                     divSquare.classList.add("pointer");
                     divSquare.classList.add("allowed-move");
+                    if (whoseTurn === 'b') divSquare.querySelector('span').classList.add("white-piece");
                 }
                 toMove = [i,j];
             }
         }
-            
-        
+    }
+
 });
 
 //change player turn
