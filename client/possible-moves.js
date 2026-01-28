@@ -188,16 +188,47 @@ function possibleMoves() {
                 }
             }
 
-            else if (curBoard[i][j][0] === '♚') {
+            dicMoves[[i,j]] = moves;
+        }
+    }
+
+    return dicMoves;
+}
+
+//check is a square is unavailable for the king because under attack by byWho
+function isSquareUnderAttack(ni, nj, byWho, dicMoves) {
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            moves = dicMoves[[i,j]];
+            if (curBoard[i][j][1] === byWho) {
+                for (let move of moves) {
+                    if (move[0] === ni && move[1] === nj) return true
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+//add possible moves the king can make to dicMoves, using isSquareUnderAttack()
+function addPossibleMovesKing(dicMoves) {
+    let moves = [];
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if (curBoard[i][j][0] === '♚' && curBoard[i][j][1] === whoseTurn) {
                 let kingMoves = [[i+1,j], [i-1,j], [i,j+1], [i,j-1],
                                  [i+1,j+1], [i+1,j-1], [i-1,j+1], [i-1,j-1]];
                 for (k = 0; k < kingMoves.length; k++) {
                     let ni = kingMoves[k][0];
                     let nj = kingMoves[k][1];
-                    if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8 && curBoard[ni][nj][0] === '') {
-                        moves.push([ni,nj]);
+                    if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8) {
+                        if (!isSquareUnderAttack(ni,nj,nextPlayer(whoseTurn), dicMoves) && (curBoard[ni][nj][0] === '' || (curBoard[ni][nj][0] != '' && curBoard[ni][nj][1] != whoseTurn))) {
+                            moves.push([ni,nj]);
+                        }
                     }
                 }
+
                 //castle for white
                 if (curBoard[i][j][1] === 'w' && i === 7 && j === 4) {
                     if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜') {
@@ -207,6 +238,7 @@ function possibleMoves() {
                         moves.push([i,j-2]);
                     }
                 }
+
                 //castle for black
                 if (curBoard[i][j][1] === 'b' && i === 0 && j === 4) {
                     if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜') {
@@ -216,10 +248,11 @@ function possibleMoves() {
                         moves.push([i,j-2]);
                     }
                 }
-            }
 
-            dicMoves[[i,j]] = moves;
+                dicMoves[[i,j]] = moves;
+            }
         }
     }
+
     return dicMoves;
 }

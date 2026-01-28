@@ -103,6 +103,7 @@ document.addEventListener('click', function(clicked) {
 
     if (['piece','squar'].includes(clicked.target.id.slice(0,5))) {
         let dicMoves = possibleMoves();
+        dicMoves = addPossibleMovesKing(dicMoves);
         let i = clicked.target.id[7];
         let j = clicked.target.id[8];
         shownMoves = dicMoves[[i,j]];
@@ -119,9 +120,7 @@ document.addEventListener('click', function(clicked) {
         else {      
             if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
-                console.log(dicMoves[[i,j]]);
-                for (let x of dicMoves[[i,j]]) {
-                    console.log(x);
+                for (let x of shownMoves) {
                     let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
                     divSquare.innerHTML = "<span class='square prevent-select allowed-move' id='piece-" + whoseTurn + String(x[0]) + String(x[1]) + "'>" + curBoard[String(x[0])][String(x[1])][0] + "</span>";
                     divSquare.classList.add("pointer");
@@ -133,7 +132,7 @@ document.addEventListener('click', function(clicked) {
         }
     }
 
-});
+}, true);
 
 //change player turn
 function nextPlayer(whoseTurn) {
