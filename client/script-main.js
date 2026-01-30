@@ -104,8 +104,8 @@ document.addEventListener('click', function(clicked) {
     refreshBoard();
 
     if (['piece','squar'].includes(clicked.target.id.slice(0,5))) {
-        let dicMoves = possibleMoves();
-        dicMoves = addPossibleMovesKing(dicMoves);
+        let [dicMoves, disallowKingSquare] = possibleMoves();
+        dicMoves = addPossibleMovesKing(dicMoves, disallowKingSquare);
         let i = clicked.target.id[7];
         let j = clicked.target.id[8];
         shownMoves = dicMoves[[i,j]];
@@ -116,12 +116,14 @@ document.addEventListener('click', function(clicked) {
             
             //refresh the board
             refreshBoard();
-            checkCheckMate();
-            whoseTurn = nextPlayer(whoseTurn);
+            if (checkMate()) {
+
+            }
+            else whoseTurn = nextPlayer(whoseTurn);
         }
         else {      
             if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
-                    document.getElementById('svg-background').classList.add('clip-board');
+                document.getElementById('svg-background').classList.add('clip-board');
                 
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
                 for (let x of shownMoves) {
@@ -143,7 +145,7 @@ function nextPlayer(whoseTurn) {
     return whoseTurn === 'w' ? 'b' : 'w'
 }
 
-function checkCheckMate() {
+function checkMate() {
 
 }
 
