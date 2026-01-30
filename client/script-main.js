@@ -79,7 +79,7 @@ function clearShownLegalMoves() {
 function makeMove(i,j) {
     let old_i = toMove[0];
     let old_j = toMove[1];
-    let piece = curBoard[old_i][old_j][0];
+    let piece = curBoard[old_i][old_j][0]; 
     if (piece === '♟') {
         if (i === '0') {
             //white pawn promotion
@@ -88,19 +88,20 @@ function makeMove(i,j) {
             divPromChoices = document.getElementById('w-promotion-choices');
             divPromChoices.style.left = String(80*j-320) + "px";
 
-            document.addEventListener('click', function(clicked) {
+            document.addEventListener('click', function holdPromotion(clicked) {
                 if (clicked.target.id.slice(0,9) === 'promotion') {
-                    console.log("coucou");
                     promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
                     curBoard[i][j] = [promotionPiece, 'w'];
                     divProm.style.display = "none";
                     refreshBoard();
+                    document.removeEventListener('click', holdPromotion);
                 }
                 if (clicked.target.id === "btn-cancel-promotion") {
                     curBoard[old_i][old_j] = ['♟', 'w', false];
                     whoseTurn = 'w';
                     divProm.style.display = "none";
                     refreshBoard();
+                    document.removeEventListener('click', holdPromotion);
                 }
             });
         }
@@ -149,10 +150,16 @@ document.addEventListener('click', function(clicked) {
         
         if (clicked.target.classList.contains("allowed-move")) {
             //a legal square has been clicked on : move the piece to this square
-            makeMove(i,j);
+            //first remove the pointer class
+            divSquareMovedPiece = document.getElementById("square-" + String(toMove[0]) + String(toMove[1]));
+            console.log(divSquareMovedPiece);
+            divSquareMovedPiece.classList.remove("pointer");
             
+            makeMove(i,j);
+
             //refresh the board
             refreshBoard();
+            
             if (checkMate()) {
 
             }
