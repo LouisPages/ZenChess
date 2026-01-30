@@ -16,10 +16,10 @@ let curBoard = [
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [['♟', 'w', true], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
+    [['♟', 'w', true], ['♟', 'b', false], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+    [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
-let whoseTurn = 'w';
+let whoseTurn = 'b';
 let shownMoves = [];
 let toMove = [];
 let tabPieces = ['♜', '♛', '♚', '♝', '♞', '♟'];
@@ -96,9 +96,34 @@ function makeMove(i,j) {
                     refreshBoard();
                     document.removeEventListener('click', holdPromotion);
                 }
-                if (clicked.target.id === "btn-cancel-promotion") {
+                if (clicked.target.id === "w-btn-cancel-promotion") {
                     curBoard[old_i][old_j] = ['♟', 'w', false];
                     whoseTurn = 'w';
+                    divProm.style.display = "none";
+                    refreshBoard();
+                    document.removeEventListener('click', holdPromotion);
+                }
+            });
+        }
+        else if (i === '7') {
+            console.log("coucou");
+            //black pawn promotion
+            divProm = document.getElementById('b-pawn-promotion');
+            divProm.style.display = "flex";
+            divPromChoices = document.getElementById('b-promotion-choices');
+            divPromChoices.style.left = String(80*j-320) + "px";
+
+            document.addEventListener('click', function holdPromotion(clicked) {
+                if (clicked.target.id.slice(0,9) === 'promotion') {
+                    promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
+                    curBoard[i][j] = [promotionPiece, 'b'];
+                    divProm.style.display = "none";
+                    refreshBoard();
+                    document.removeEventListener('click', holdPromotion);
+                }
+                if (clicked.target.id === "b-btn-cancel-promotion") {
+                    curBoard[old_i][old_j] = ['♟', 'b', false];
+                    whoseTurn = 'b';
                     divProm.style.display = "none";
                     refreshBoard();
                     document.removeEventListener('click', holdPromotion);
@@ -152,7 +177,6 @@ document.addEventListener('click', function(clicked) {
             //a legal square has been clicked on : move the piece to this square
             //first remove the pointer class
             divSquareMovedPiece = document.getElementById("square-" + String(toMove[0]) + String(toMove[1]));
-            console.log(divSquareMovedPiece);
             divSquareMovedPiece.classList.remove("pointer");
             
             makeMove(i,j);

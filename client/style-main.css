@@ -102,9 +102,34 @@ chess board
     top: -320px;
 }
 
-.cancel-promotion {
+
+#b-pawn-promotion {
+    position: relative;
+    z-index: 4;
+    display: none;
+}
+
+#b-promotion-choices {
+    background: whitesmoke;
+    box-shadow: 0 0 10px white;
+    color: black;
+    font-size: 75px;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-rows: 40px repeat(4, 80px);
+    grid-template-columns: repeat(1, 80px);
+    position: absolute;
+    top: -40px;
+}
+
+.w-cancel-promotion {
     font-size: 30px;
     padding-bottom: 10px;
+}
+.b-cancel-promotion {
+    font-size: 30px;
+    padding-top: 10px;
 }
 
 .square-bright {
