@@ -60,6 +60,8 @@ function clearShownLegalMoves() {
         divSquare.classList.remove("allowed-move");
     }
     shownMoves = [];
+
+    document.getElementById('svg-background').classList.remove('clip-board');
 }
 
 function makeMove (i,j) {
@@ -119,6 +121,8 @@ document.addEventListener('click', function(clicked) {
         }
         else {      
             if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
+                    document.getElementById('svg-background').classList.add('clip-board');
+                
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
                 for (let x of shownMoves) {
                     let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
