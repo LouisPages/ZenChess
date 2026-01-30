@@ -1,18 +1,30 @@
+// let curBoard = [
+//     [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♛', 'b'], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+//     [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
+//     [[''], [''], [''], [''], [''], [''], [''], ['']],
+//     [[''], [''], [''], [''], [''], [''], [''], ['']],
+//     [[''], [''], [''], [''], [''], [''], [''], ['']],
+//     [[''], [''], [''], [''], [''], [''], [''], ['']],
+//     [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+//     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
+// ];
+
 let curBoard = [
-    [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♛', 'b'], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-    [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
+    [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+    [['♟', 'b', true], ['♟', 'w', false], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+    [['♟', 'w', true], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
 let whoseTurn = 'w';
 let shownMoves = [];
 let toMove = [];
-let tabPieces = ['♜','♛', '♚', '♝', '♞', '♟'];
+let tabPieces = ['♜', '♛', '♚', '♝', '♞', '♟'];
 let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
+let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 
 
 //create the board with empty cases
@@ -64,10 +76,35 @@ function clearShownLegalMoves() {
     document.getElementById('svg-background').classList.remove('clip-board');
 }
 
-function makeMove (i,j) {
-    let piece = curBoard[toMove[0]][toMove[1]][0];
+function makeMove(i,j) {
+    let old_i = toMove[0];
+    let old_j = toMove[1];
+    let piece = curBoard[old_i][old_j][0];
     if (piece === '♟') {
-        curBoard[i][j] = ['♟', whoseTurn, false];
+        if (i === '0') {
+            //white pawn promotion
+            divProm = document.getElementById('w-pawn-promotion');
+            divProm.style.display = "flex";
+            divPromChoices = document.getElementById('w-promotion-choices');
+            divPromChoices.style.left = String(80*j-320) + "px";
+
+            document.addEventListener('click', function(clicked) {
+                if (clicked.target.id.slice(0,9) === 'promotion') {
+                    console.log("coucou");
+                    promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
+                    curBoard[i][j] = [promotionPiece, 'w'];
+                    divProm.style.display = "none";
+                    refreshBoard();
+                }
+                if (clicked.target.id === "btn-cancel-promotion") {
+                    curBoard[old_i][old_j] = ['♟', 'w', false];
+                    whoseTurn = 'w';
+                    divProm.style.display = "none";
+                    refreshBoard();
+                }
+            });
+        }
+        else curBoard[i][j] = ['♟', whoseTurn, false];
     }
     else if (piece === '♚') {
         curBoard[i][j] = [piece, whoseTurn];
@@ -137,7 +174,6 @@ document.addEventListener('click', function(clicked) {
             }
         }
     }
-
 }, true);
 
 //change player turn

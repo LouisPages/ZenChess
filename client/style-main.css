@@ -59,7 +59,7 @@ chess board
 
 
 #board-container {
-    position: fixed;
+    position: relative;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -76,9 +76,35 @@ chess board
 
 #chess-board {
     display: grid;
+    position: absolute;
     grid-template-columns: repeat(8, 80px);
     grid-template-rows: repeat(8, 80px);
     gap: 0;
+}
+
+#w-pawn-promotion {
+    position: relative;
+    z-index: 4;
+    display: none;
+}
+
+#w-promotion-choices {
+    background: #080c1d;
+    box-shadow: 0 0 10px black;
+    color: white;
+    font-size: 75px;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-rows: repeat(4, 80px) 40px;
+    grid-template-columns: repeat(1, 80px);
+    position: absolute;
+    top: -320px;
+}
+
+.cancel-promotion {
+    font-size: 30px;
+    padding-bottom: 10px;
 }
 
 .square-bright {

@@ -6,90 +6,89 @@ function possibleMoves() {
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
             let moves = [];
-            let disallow = [];
+            let disallowKing = [];
 
             if (curBoard[i][j][0] === '♜') {
                 for (k = i+1; k < 8; k++) {
                     if (curBoard[k][j][0] === '') {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([k,j]);
                         }
                     }
                     else {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[k][j][1] === whoseTurn) {
-                            disallow.push([k+1,j]);
+                            disallowKing.push([k+1,j]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([k,j]);
                             }
-                            disallow.push([k+1,j]);
+                            disallowKing.push([k+1,j]);
                         }
                         break;
                     }
                 }
                 for (k = i-1; k >= 0; k--) {
                     if (curBoard[k][j][0] === '') {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([k,j]);
                         }
                     }
                     else {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[k][j][1] === whoseTurn) {
-                            disallow.push([k-1,j]);
+                            disallowKing.push([k-1,j]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([k,j]);
                             }
-                            disallow.push([k-1,j]);
+                            disallowKing.push([k-1,j]);
                         }
                         break;
                     }
                 }
                 for (k = j+1; k < 8; k++) {
                     if (curBoard[i][k][0] === '') {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i,k]);
                         }
                     }
                     else {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][k][1] === whoseTurn) {
-                            disallow.push([i,k+1]);
+                            disallowKing.push([i,k+1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i,k]);
-                                console.log("coucou");
                             }
-                            disallow.push([i,k+1]);
+                            disallowKing.push([i,k+1]);
                         }
                         break;
                     }
                 }
                 for (k = j-1; k >= 0; k--) {
                     if (curBoard[i][k][0] === '') {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i,k]);
                         }
                     }
                     else {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][k][1] === whoseTurn) {
-                            disallow.push([i,k-1]);
+                            disallowKing.push([i,k-1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i,k]);
                             }
-                            disallow.push([i,k-1]);
+                            disallowKing.push([i,k-1]);
                         }
                         break;
                     }
@@ -99,13 +98,13 @@ function possibleMoves() {
             else if (curBoard[i][j][0] === '♟') {
                 if (curBoard[i][j][1] === 'w') {
                     if (i-1 >= 0 && j-1 >= 0) {
-                        disallow.push([i-1,j-1]);
+                        disallowKing.push([i-1,j-1]);
                     }
                     if (i-1 >=0 && j+1 <= 7) {
-                        disallow.push([i-1,j+1]);
+                        disallowKing.push([i-1,j+1]);
                     }
                     if (curBoard[i][j][1] === whoseTurn) {
-                        if (i > 1 && curBoard[i-1][j][0] === '') {
+                        if (i > 0 && curBoard[i-1][j][0] === '') {
                             moves.push([i-1,j]);
                             if (curBoard[i][j][2] && curBoard[i-2][j][0] === '') {
                                 moves.push([i-2,j]);
@@ -121,10 +120,10 @@ function possibleMoves() {
                 }
                 else {
                     if (i+1 <= 7 && j-1 >= 0) {
-                        disallow.push([i+1,j-1]);
+                        disallowKing.push([i+1,j-1]);
                     }
                     if (i+1 <= 7 && j+1 <= 7) {
-                        disallow.push([i+1,j+1]);
+                        disallowKing.push([i+1,j+1]);
                     }
                     if (curBoard[i][j][1] === whoseTurn) {
                         if (i < 7 && curBoard[i+1][j][0] === '') {
@@ -150,7 +149,7 @@ function possibleMoves() {
                     let ni = knightMoves[k][0];
                     let nj = knightMoves[k][1];
                     if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8) {
-                        disallow.push([ni,nj]);
+                        disallowKing.push([ni,nj]);
                         if (curBoard[i][j][1] === whoseTurn && (curBoard[ni][nj][0] === '' || (curBoard[ni][nj] != '' && curBoard[ni][nj][1] != whoseTurn))) {
                             moves.push([ni,nj]);
                         }
@@ -161,84 +160,84 @@ function possibleMoves() {
             else if (curBoard[i][j][0] === '♝') {
                 for (k = 1; i+k < 8 && j+k < 8; k++) {
                     if (curBoard[i+k][j+k][0] === '') {
-                        disallow.push([i+k,j+k]);
+                        disallowKing.push([i+k,j+k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i+k,j+k]);
                         }
                     }
                     else {
-                        disallow.push([i+k,j+k]);
+                        disallowKing.push([i+k,j+k]);
                         if (curBoard[i+k][j+k][1] === whoseTurn) {
-                            disallow.push([i+k+1,j+k+1]);
+                            disallowKing.push([i+k+1,j+k+1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i+k,j+k]);
                             }
-                            disallow.push([i+k+1,j+k+1]);
+                            disallowKing.push([i+k+1,j+k+1]);
                         }
                         break;
                     }
                 }
                 for (k = 1; i+k < 8 && j-k >= 0; k++) {
                     if (curBoard[i+k][j-k][0] === '') {
-                        disallow.push([i+k,j-k]);
+                        disallowKing.push([i+k,j-k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i+k,j-k]);
                         }
                     }
                     else {
-                        disallow.push([i+k,j-k]);
+                        disallowKing.push([i+k,j-k]);
                         if (curBoard[i+k][j-k][1] === whoseTurn) {
-                            disallow.push([i+k+1,j-k-1]);
+                            disallowKing.push([i+k+1,j-k-1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i+k,j-k]);
                             }
-                            disallow.push([i+k+1,j-k-1]);
+                            disallowKing.push([i+k+1,j-k-1]);
                         }
                         break;
                     }
                 }
                 for (k = 1; i-k >= 0 && j+k < 8; k++) {
                     if (curBoard[i-k][j+k][0] === '') {
-                        disallow.push([i-k,j+k]);
+                        disallowKing.push([i-k,j+k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i-k,j+k]);
                         }
                     }
                     else {
-                        disallow.push([i-k,j+k]);
+                        disallowKing.push([i-k,j+k]);
                         if (curBoard[i-k][j+k][1] === whoseTurn) {
-                            disallow.push([i-k-1,j+k+1]);
+                            disallowKing.push([i-k-1,j+k+1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i-k,j+k]);
                             }
-                            disallow.push([i-k-1,j+k+1]);
+                            disallowKing.push([i-k-1,j+k+1]);
                         }
                         break;
                     }
                 }
                 for (k = 1; i-k >= 0 && j-k >= 0; k++) {
                     if (curBoard[i-k][j-k][0] === '') {
-                        disallow.push([i-k,j-k]);
+                        disallowKing.push([i-k,j-k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i-k,j-k]);
                         }
                     }
                     else {
-                        disallow.push([i-k,j-k]);
+                        disallowKing.push([i-k,j-k]);
                         if (curBoard[i-k][j-k][1] === whoseTurn) {
-                            disallow.push([i-k-1,j-k-1]);
+                            disallowKing.push([i-k-1,j-k-1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i-k,j-k]);
                             }
-                            disallow.push([i-k-1,j-k-1]);
+                            disallowKing.push([i-k-1,j-k-1]);
                         }
                         break;
                     }
@@ -247,84 +246,84 @@ function possibleMoves() {
             else if (curBoard[i][j][0] === '♛') {
                 for (k = i+1; k < 8; k++) {
                     if (curBoard[k][j][0] === '') {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([k,j]);
                         }
                     }
                     else {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[k][j][1] === whoseTurn) {
-                            disallow.push([k+1,j]);
+                            disallowKing.push([k+1,j]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([k,j]);
                             }
-                            disallow.push([k+1,j]);
+                            disallowKing.push([k+1,j]);
                         }
                         break;
                     }
                 }
                 for (k = i-1; k >= 0; k--) {
                     if (curBoard[k][j][0] === '') {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([k,j]);
                         }
                     }
                     else {
-                        disallow.push([k,j]);
+                        disallowKing.push([k,j]);
                         if (curBoard[k][j][1] === whoseTurn) {
-                            disallow.push([k-1,j]);
+                            disallowKing.push([k-1,j]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([k,j]);
                             }
-                            disallow.push([k-1,j]);
+                            disallowKing.push([k-1,j]);
                         }
                         break;
                     }
                 }
                 for (k = j+1; k < 8; k++) {
                     if (curBoard[i][k][0] === '') {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i,k]);
                         }
                     }
                     else {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][k][1] === whoseTurn) {
-                            disallow.push([i,k+1]);
+                            disallowKing.push([i,k+1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i,k]);
                             }
-                            disallow.push([i,k+1]);
+                            disallowKing.push([i,k+1]);
                         }
                         break;
                     }
                 }
                 for (k = j-1; k >= 0; k--) {
                     if (curBoard[i][k][0] === '') {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i,k]);
                         }
                     }
                     else {
-                        disallow.push([i,k]);
+                        disallowKing.push([i,k]);
                         if (curBoard[i][k][1] === whoseTurn) {
-                            disallow.push([i,k-1]);
+                            disallowKing.push([i,k-1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i,k]);
                             }
-                            disallow.push([i,k-1]);
+                            disallowKing.push([i,k-1]);
                         }
                         break;
                     }
@@ -332,84 +331,84 @@ function possibleMoves() {
 
                 for (k = 1; i+k < 8 && j+k < 8; k++) {
                     if (curBoard[i+k][j+k][0] === '') {
-                        disallow.push([i+k,j+k]);
+                        disallowKing.push([i+k,j+k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i+k,j+k]);
                         }
                     }
                     else {
-                        disallow.push([i+k,j+k]);
+                        disallowKing.push([i+k,j+k]);
                         if (curBoard[i+k][j+k][1] === whoseTurn) {
-                            disallow.push([i+k+1,j+k+1]);
+                            disallowKing.push([i+k+1,j+k+1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i+k,j+k]);
                             }
-                            disallow.push([i+k+1,j+k+1]);
+                            disallowKing.push([i+k+1,j+k+1]);
                         }
                         break;
                     }
                 }
                 for (k = 1; i+k < 8 && j-k >= 0; k++) {
                     if (curBoard[i+k][j-k][0] === '') {
-                        disallow.push([i+k,j-k]);
+                        disallowKing.push([i+k,j-k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i+k,j-k]);
                         }
                     }
                     else {
-                        disallow.push([i+k,j-k]);
+                        disallowKing.push([i+k,j-k]);
                         if (curBoard[i+k][j-k][1] === whoseTurn) {
-                            disallow.push([i+k+1,j-k-1]);
+                            disallowKing.push([i+k+1,j-k-1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i+k,j-k]);
                             }
-                            disallow.push([i+k+1,j-k-1]);
+                            disallowKing.push([i+k+1,j-k-1]);
                         }
                         break;
                     }
                 }
                 for (k = 1; i-k >= 0 && j+k < 8; k++) {
                     if (curBoard[i-k][j+k][0] === '') {
-                        disallow.push([i-k,j+k]);
+                        disallowKing.push([i-k,j+k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i-k,j+k]);
                         }
                     }
                     else {
-                        disallow.push([i-k,j+k]);
+                        disallowKing.push([i-k,j+k]);
                         if (curBoard[i-k][j+k][1] === whoseTurn) {
-                            disallow.push([i-k-1,j+k+1]);
+                            disallowKing.push([i-k-1,j+k+1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i-k,j+k]);
                             }
-                            disallow.push([i-k-1,j+k+1]);
+                            disallowKing.push([i-k-1,j+k+1]);
                         }
                         break;
                     }
                 }
                 for (k = 1; i-k >= 0 && j-k >= 0; k++) {
                     if (curBoard[i-k][j-k][0] === '') {
-                        disallow.push([i-k,j-k]);
+                        disallowKing.push([i-k,j-k]);
                         if (curBoard[i][j][1] === whoseTurn) {
                             moves.push([i-k,j-k]);
                         }
                     }
                     else {
-                        disallow.push([i-k,j-k]);
+                        disallowKing.push([i-k,j-k]);
                         if (curBoard[i-k][j-k][1] === whoseTurn) {
-                            disallow.push([i-k-1,j-k-1]);
+                            disallowKing.push([i-k-1,j-k-1]);
                         }
                         else {
                             if (curBoard[i][j][1] === whoseTurn) {
                                 moves.push([i-k,j-k]);
                             }
-                            disallow.push([i-k-1,j-k-1]);
+                            disallowKing.push([i-k-1,j-k-1]);
                         }
                         break;
                     }
@@ -417,7 +416,7 @@ function possibleMoves() {
             }
 
             dicMoves[[i,j]] = moves;
-            disallowKingSquare[[i,j]] = disallow;
+            disallowKingSquare[[i,j]] = disallowKing;
         }
     }
 
@@ -426,7 +425,6 @@ function possibleMoves() {
 
 //check is a square is unavailable for the king because under attack by byWho
 function isSquareUnderAttack(ni, nj, byWho, disallowKingSquare) {
-    console.log(disallowKingSquare[[0,3]]);
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
             disallowSquares = disallowKingSquare[[i,j]];
@@ -454,7 +452,6 @@ function addPossibleMovesKing(dicMoves, disallowKingSquare) {
                     let nj = kingMoves[k][1];
                     if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8) {
                         if (!isSquareUnderAttack(ni,nj,nextPlayer(whoseTurn), disallowKingSquare) && (curBoard[ni][nj][0] === '' || (curBoard[ni][nj][0] != '' && curBoard[ni][nj][1] != whoseTurn))) {
-                            console.log("ajout de ", ni,nj)
                             moves.push([ni,nj]);
                         }
                     }
