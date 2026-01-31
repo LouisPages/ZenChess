@@ -9,9 +9,21 @@
 //     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 // ];
 
+// //board to test en passant/promotion
+// let curBoard = [
+//     [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+//     [['♟', 'b', true], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
+//     [[''], [''], [''], [''], [''], [''], [''], ['']],
+//     [[''], ['♟', 'w', false], ['♟', 'w', false], [''], [''], [''], [''], ['']],
+//     [[''], ['♟', 'b', false], ['♟', 'b', false], [''], [''], [''], [''], ['']],
+//     [[''], [''], [''], [''], [''], [''], [''], ['']],
+//     [['♟', 'w', true], [''], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+//     [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
+// ];
+
 let curBoard = [
     [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-    [[''], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
+    [[''], [''],  ['♟', 'w', true], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
@@ -20,7 +32,7 @@ let curBoard = [
     [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
 
-let whoseTurn = 'w';
+let whoseTurn = 'b';
 let shownMoves = [];
 let toMove = [];
 let tabPieces = ['♜', '♛', '♚', '♝', '♞', '♟'];
@@ -70,7 +82,6 @@ function refreshBoard() {
 function clearShownLegalMoves() {
     for (let x of shownMoves) {
         let divSquare = document.getElementById("square-" + String(x[0]) + String(x[1]));
-        // divSquare.innerHTML = "";
         divSquare.classList.remove("pointer");
         divSquare.classList.remove("allowed-move");
     }
@@ -98,6 +109,19 @@ function makeMove(i,j) {
                     divProm.style.display = "none";
                     lastMove = ['♟', [old_i, old_j], [i,j]];
                     refreshBoard();
+
+                    //check is the promotion make a check
+                    let [mate, kingPos] = mateCheck();
+                    if (mate) {
+                        kingToMove = true;
+                        mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
+                        mateKingSquare.classList.add('square-red');
+                    }
+                    let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
+                    dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
+                    dicMovesCheck = filterPinnedMoves(dicMovesCheck);
+                    checkCheckMate(dicMovesCheck, kingPos);
+
                     document.removeEventListener('click', holdPromotion);
                 }
                 if (clicked.target.id === "w-btn-cancel-promotion") {
@@ -123,6 +147,19 @@ function makeMove(i,j) {
                     divProm.style.display = "none";
                     lastMove = ['♟', [old_i, old_j], [i,j]];
                     refreshBoard();
+
+                    //check is the promotion make a check
+                    let [mate, kingPos] = mateCheck();
+                    if (mate) {
+                        kingToMove = true;
+                        mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
+                        mateKingSquare.classList.add('square-red');
+                    }
+                    let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
+                    dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
+                    dicMovesCheck = filterPinnedMoves(dicMovesCheck);
+                    checkCheckMate(dicMovesCheck, kingPos);
+
                     document.removeEventListener('click', holdPromotion);
                 }
                 if (clicked.target.id === "b-btn-cancel-promotion") {
@@ -147,7 +184,7 @@ function makeMove(i,j) {
         curBoard[i][j] = [piece, whoseTurn];
         //castle right
         if (j - toMove[1] === 2) {
-            curBoard[toMove[0]][parseInt(toMove[1])+1] = ['♜', whoseTurn]; //!!toMove[1] + 1 gives "toMove[1]1" cause toMove[1] is a string
+            curBoard[toMove[0]][parseInt(toMove[1])+1] = ['♜', whoseTurn];
             curBoard[toMove[0]][7] = [''];
             castle[whoseTurn + 'right'] = false;
         }
@@ -189,6 +226,7 @@ document.addEventListener('click', function(clicked) {
     if (['piece','squar'].includes(clicked.target.id.slice(0,5))) {
         let [dicMoves, disallowKingSquare] = possibleMoves();
         dicMoves = addPossibleMovesKing(dicMoves, disallowKingSquare);
+        dicMoves = filterPinnedMoves(dicMoves);
         let i = clicked.target.id[7];
         let j = clicked.target.id[8];
         shownMoves = dicMoves[[i,j]];
@@ -210,12 +248,17 @@ document.addEventListener('click', function(clicked) {
                 //change the colo of the king's square to red
                 mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
                 mateKingSquare.classList.add('square-red');
+            } else {
+                kingToMove = false;
             }
-            checkCheckMate(dicMoves, kingPos);
+            let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
+            dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
+            dicMovesCheck = filterPinnedMoves(dicMovesCheck);
+            checkCheckMate(dicMovesCheck, kingPos);
             
         }
         else {      
-            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && ((kingToMove && curBoard[i][j][0] === '♚' && dicMoves[[i,j]].length != 0) || !kingToMove)) {
+            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && ((kingToMove && curBoard[i][j][0] === '♚' && dicMoves[[i,j]].length != 0) || (!kingToMove && dicMoves[[i,j]].length != 0))) {
                 document.getElementById('svg-background').classList.add('clip-board');
                 
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play

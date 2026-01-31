@@ -87,7 +87,7 @@ function possibleMoves() {
                     if (curBoard[i][j][1] === whoseTurn) {
                         if (i > 0 && curBoard[i-1][j][0] === '') {
                             moves.push([i-1,j]);
-                            if (curBoard[i][j][2] && curBoard[i-2][j][0] === '') {
+                            if (curBoard[i][j][2] && i > 1 && curBoard[i-2][j][0] === '') {
                                 moves.push([i-2,j]);
                             }
                         }
@@ -367,6 +367,50 @@ function isSquareUnderAttack(ni, nj, byWho, disallowKingSquare) {
     return false;
 }
 
+function isPiecePinned(pieceI, pieceJ, moveI, moveJ) {
+    let tempBoard = JSON.parse(JSON.stringify(curBoard));
+    let pieceData = tempBoard[pieceI][pieceJ];
+    tempBoard[moveI][moveJ] = pieceData;
+    tempBoard[pieceI][pieceJ] = [''];
+    
+    let kingI, kingJ;
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if (tempBoard[i][j][0] === '♚' && tempBoard[i][j][1] === whoseTurn) {
+                kingI = i;
+                kingJ = j;
+                break;
+            }
+        }
+    }
+    
+    let originalBoard = curBoard;
+    curBoard = tempBoard;
+    let [_, disallowKingSquare] = possibleMoves();
+    curBoard = originalBoard;
+    
+    return isSquareUnderAttack(kingI, kingJ, nextPlayer(whoseTurn), disallowKingSquare);
+}
+
+function filterPinnedMoves(dicMoves) {
+    let filteredMoves = {};
+    for (let key in dicMoves) {
+        let [i, j] = key.split(',').map(x => parseInt(x));
+        if (curBoard[i][j][1] === whoseTurn && curBoard[i][j][0] !== '♚') {
+            let validMoves = [];
+            for (let move of dicMoves[key]) {
+                if (!isPiecePinned(i, j, move[0], move[1])) {
+                    validMoves.push(move);
+                }
+            }
+            filteredMoves[key] = validMoves;
+        } else {
+            filteredMoves[key] = dicMoves[key];
+        }
+    }
+    return filteredMoves;
+}
+
 function addPossibleMovesKing(dicMoves, disallowKingSquare) {
     let moves = [];
     for (let i = 0; i < 8; i++) {
@@ -385,19 +429,19 @@ function addPossibleMovesKing(dicMoves, disallowKingSquare) {
                 }
 
                 if (curBoard[i][j][1] === 'w' && i === 7 && j === 4) {
-                    if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'w') {
+                    if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'w' && !isSquareUnderAttack(i,j,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j+1,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j+2,nextPlayer(whoseTurn), disallowKingSquare)) {
                         moves.push([i,j+2]);
                     }
-                    if (castle['wleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜'  && curBoard[i][j-4][1] === 'w') {
+                    if (castle['wleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜'  && curBoard[i][j-4][1] === 'w' && !isSquareUnderAttack(i,j,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j-1,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j-2,nextPlayer(whoseTurn), disallowKingSquare)) {
                         moves.push([i,j-2]);
                     }
                 }
 
                 if (curBoard[i][j][1] === 'b' && i === 0 && j === 4) {
-                    if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'b') {
+                    if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'b' && !isSquareUnderAttack(i,j,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j+1,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j+2,nextPlayer(whoseTurn), disallowKingSquare)) {
                         moves.push([i,j+2]);
                     }
-                    if (castle['bleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜' && curBoard[i][j-4][1] === 'b') {
+                    if (castle['bleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜' && curBoard[i][j-4][1] === 'b' && !isSquareUnderAttack(i,j,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j-1,nextPlayer(whoseTurn), disallowKingSquare) && !isSquareUnderAttack(i,j-2,nextPlayer(whoseTurn), disallowKingSquare)) {
                         moves.push([i,j-2]);
                     }
                 }
