@@ -140,6 +140,10 @@ chess board
     background-color: #945508;
 }
 
+.square-red {
+    background-color: rgb(220, 43, 43);
+}
+
 #square-00 {
     border-top-left-radius: 3%;
 }
@@ -162,6 +166,8 @@ chess board
     align-items: center;
     justify-content: center;
 }
+
+
 
 .white-piece {
     color: white;

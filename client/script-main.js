@@ -10,7 +10,7 @@
 // ];
 
 let curBoard = [
-    [[''], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+    [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
     [[''], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
@@ -163,6 +163,7 @@ function makeMove(i,j) {
             castle[whoseTurn + 'right'] = false;
         }
         lastMove = ['♚', [old_i, old_j], [i, j]];
+        document.getElementById('square-' + old_i + old_j).classList.remove('square-red');
         kingToMove = false;
     }
     else {
@@ -202,12 +203,19 @@ document.addEventListener('click', function(clicked) {
             refreshBoard();
             
             whoseTurn = nextPlayer(whoseTurn);
-            if (mateCheck()) {
+            let [mate, kingPos] = mateCheck();
+            if (mate) {
                 kingToMove = true;
+
+                //change the colo of the king's square to red
+                mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
+                mateKingSquare.classList.add('square-red');
             }
+            checkCheckMate(dicMoves, kingPos);
+            
         }
         else {      
-            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && ((kingToMove && curBoard[i][j][0] === '♚') || !kingToMove)) {
+            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && ((kingToMove && curBoard[i][j][0] === '♚' && dicMoves[[i,j]].length != 0) || !kingToMove)) {
                 document.getElementById('svg-background').classList.add('clip-board');
                 
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
@@ -229,14 +237,26 @@ function nextPlayer(whoseTurn) {
     return whoseTurn === 'w' ? 'b' : 'w'
 }
 
+//check if the king is mate
 function mateCheck() {
     let [_, disallowKingSquare] = possibleMoves();
-    for (i = 0; i < 7; i++) {
-        for (j = 0; j < 7; j++) {
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
             if (curBoard[i][j][0] === '♚' && curBoard[i][j][1] === whoseTurn) {
-                return isSquareUnderAttack(i, j, nextPlayer(whoseTurn), disallowKingSquare);
+                return [isSquareUnderAttack(i, j, nextPlayer(whoseTurn), disallowKingSquare), [i,j]];
             }
         }
+    }
+}
+
+//show a message if there is checkMate
+function checkCheckMate(dicMoves, kingPos) {
+    if (kingToMove && dicMoves[kingPos].length != 0 && Object.keys(dicMoves).every(key => {
+        if (curBoard[parseInt(key[0])][parseInt(key[2])][1] === whoseTurn) {console.log(key, dicMoves[key]); return(dicMoves[key].length === 0);}
+        else return true 
+    })) {
+        //todo
+        location.reload();                
     }
 }
 

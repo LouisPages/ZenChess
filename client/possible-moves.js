@@ -19,15 +19,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([k,j]);
-                        if (curBoard[k][j][1] === whoseTurn) {
-                            disallowKing.push([k+1,j]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[k][j][1] !== whoseTurn) {
+                            moves.push([k,j]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([k,j]);
-                            }
-                            disallowKing.push([k+1,j]);
-                        }
+                        if (curBoard[k][j][0] === '♚') disallowKing.push([k+1,j]);
                         break;
                     }
                 }
@@ -40,15 +35,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([k,j]);
-                        if (curBoard[k][j][1] === whoseTurn) {
-                            disallowKing.push([k-1,j]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[k][j][1] !== whoseTurn) {
+                            moves.push([k,j]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([k,j]);
-                            }
-                            disallowKing.push([k-1,j]);
-                        }
+                        if (curBoard[k][j][0] === '♚') disallowKing.push([k-1,j]);
                         break;
                     }
                 }
@@ -61,15 +51,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i,k]);
-                        if (curBoard[i][k][1] === whoseTurn) {
-                            disallowKing.push([i,k+1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i][k][1] !== whoseTurn) {
+                            moves.push([i,k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i,k]);
-                            }
-                            disallowKing.push([i,k+1]);
-                        }
+                        if (curBoard[i][k][0] === '♚') disallowKing.push([i,k+1]);
                         break;
                     }
                 }
@@ -82,15 +67,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i,k]);
-                        if (curBoard[i][k][1] === whoseTurn) {
-                            disallowKing.push([i,k-1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i][k][1] !== whoseTurn) {
+                            moves.push([i,k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i,k]);
-                            }
-                            disallowKing.push([i,k-1]);
-                        }
+                        if (curBoard[i][k][0] === '♚') disallowKing.push([i,k-1]);
                         break;
                     }
                 }
@@ -118,7 +98,6 @@ function possibleMoves() {
                             moves.push([i-1,j+1]);
                         }
                     }
-                    //"en passant" for white
                     if (lastMove != null && i === 3 && lastMove[0] === '♟' && lastMove[1][0] === '1' && lastMove[2][0] === '3') {
                         if (j > 0 && lastMove[1][1] === String(j-1)) moves.push([i-1,j-1]);
                         if (j < 7 && lastMove[1][1] === String(j+1)) moves.push([i-1,j+1]);
@@ -145,7 +124,6 @@ function possibleMoves() {
                             moves.push([i+1,j+1]);
                         }
                     }
-                    //"en passant" for black
                     if (lastMove != null && i === 4 && lastMove[0] === '♟' && lastMove[1][0] === '6' && lastMove[2][0] === '4') {
                         if (j > 0 && lastMove[1][1] === String(j-1)) moves.push([i+1,j-1]);
                         if (j < 7 && lastMove[1][1] === String(j+1)) moves.push([i+1,j+1]);
@@ -178,15 +156,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i+k,j+k]);
-                        if (curBoard[i+k][j+k][1] === whoseTurn) {
-                            disallowKing.push([i+k+1,j+k+1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i+k][j+k][1] !== whoseTurn) {
+                            moves.push([i+k,j+k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i+k,j+k]);
-                            }
-                            disallowKing.push([i+k+1,j+k+1]);
-                        }
+                        if (curBoard[i+k][j+k][0] === '♚') disallowKing.push([i+k+1,j+k+1]);
                         break;
                     }
                 }
@@ -199,15 +172,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i+k,j-k]);
-                        if (curBoard[i+k][j-k][1] === whoseTurn) {
-                            disallowKing.push([i+k+1,j-k-1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i+k][j-k][1] !== whoseTurn) {
+                            moves.push([i+k,j-k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i+k,j-k]);
-                            }
-                            disallowKing.push([i+k+1,j-k-1]);
-                        }
+                        if (curBoard[i+k][j-k][0] === '♚') disallowKing.push([i+k+1,j-k-1]);
                         break;
                     }
                 }
@@ -220,15 +188,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i-k,j+k]);
-                        if (curBoard[i-k][j+k][1] === whoseTurn) {
-                            disallowKing.push([i-k-1,j+k+1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i-k][j+k][1] !== whoseTurn) {
+                            moves.push([i-k,j+k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i-k,j+k]);
-                            }
-                            disallowKing.push([i-k-1,j+k+1]);
-                        }
+                        if (curBoard[i-k][j+k][0] === '♚') disallowKing.push([i-k-1,j+k+1]);
                         break;
                     }
                 }
@@ -241,15 +204,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i-k,j-k]);
-                        if (curBoard[i-k][j-k][1] === whoseTurn) {
-                            disallowKing.push([i-k-1,j-k-1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i-k][j-k][1] !== whoseTurn) {
+                            moves.push([i-k,j-k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i-k,j-k]);
-                            }
-                            disallowKing.push([i-k-1,j-k-1]);
-                        }
+                        if (curBoard[i-k][j-k][0] === '♚') disallowKing.push([i-k-1,j-k-1]);
                         break;
                     }
                 }
@@ -264,15 +222,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([k,j]);
-                        if (curBoard[k][j][1] === whoseTurn) {
-                            disallowKing.push([k+1,j]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[k][j][1] !== whoseTurn) {
+                            moves.push([k,j]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([k,j]);
-                            }
-                            disallowKing.push([k+1,j]);
-                        }
+                        if (curBoard[k][j][0] === '♚') disallowKing.push([k+1,j]);
                         break;
                     }
                 }
@@ -285,15 +238,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([k,j]);
-                        if (curBoard[k][j][1] === whoseTurn) {
-                            disallowKing.push([k-1,j]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[k][j][1] !== whoseTurn) {
+                            moves.push([k,j]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([k,j]);
-                            }
-                            disallowKing.push([k-1,j]);
-                        }
+                        if (curBoard[k][j][0] === '♚') disallowKing.push([k-1,j]);
                         break;
                     }
                 }
@@ -306,15 +254,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i,k]);
-                        if (curBoard[i][k][1] === whoseTurn) {
-                            disallowKing.push([i,k+1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i][k][1] !== whoseTurn) {
+                            moves.push([i,k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i,k]);
-                            }
-                            disallowKing.push([i,k+1]);
-                        }
+                        if (curBoard[i][k][0] === '♚') disallowKing.push([i,k+1]);
                         break;
                     }
                 }
@@ -327,15 +270,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i,k]);
-                        if (curBoard[i][k][1] === whoseTurn) {
-                            disallowKing.push([i,k-1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i][k][1] !== whoseTurn) {
+                            moves.push([i,k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i,k]);
-                            }
-                            disallowKing.push([i,k-1]);
-                        }
+                        if (curBoard[i][k][0] === '♚') disallowKing.push([i,k-1]);
                         break;
                     }
                 }
@@ -349,15 +287,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i+k,j+k]);
-                        if (curBoard[i+k][j+k][1] === whoseTurn) {
-                            disallowKing.push([i+k+1,j+k+1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i+k][j+k][1] !== whoseTurn) {
+                            moves.push([i+k,j+k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i+k,j+k]);
-                            }
-                            disallowKing.push([i+k+1,j+k+1]);
-                        }
+                        if (curBoard[i+k][j+k][0] === '♚') disallowKing.push([i+k+1,j+k+1]);
                         break;
                     }
                 }
@@ -370,15 +303,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i+k,j-k]);
-                        if (curBoard[i+k][j-k][1] === whoseTurn) {
-                            disallowKing.push([i+k+1,j-k-1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i+k][j-k][1] !== whoseTurn) {
+                            moves.push([i+k,j-k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i+k,j-k]);
-                            }
-                            disallowKing.push([i+k+1,j-k-1]);
-                        }
+                        if (curBoard[i+k][j-k][0] === '♚') disallowKing.push([i+k+1,j-k-1]);
                         break;
                     }
                 }
@@ -391,15 +319,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i-k,j+k]);
-                        if (curBoard[i-k][j+k][1] === whoseTurn) {
-                            disallowKing.push([i-k-1,j+k+1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i-k][j+k][1] !== whoseTurn) {
+                            moves.push([i-k,j+k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i-k,j+k]);
-                            }
-                            disallowKing.push([i-k-1,j+k+1]);
-                        }
+                        if (curBoard[i-k][j+k][0] === '♚') disallowKing.push([i-k-1,j+k+1]);
                         break;
                     }
                 }
@@ -412,15 +335,10 @@ function possibleMoves() {
                     }
                     else {
                         disallowKing.push([i-k,j-k]);
-                        if (curBoard[i-k][j-k][1] === whoseTurn) {
-                            disallowKing.push([i-k-1,j-k-1]);
+                        if (curBoard[i][j][1] === whoseTurn && curBoard[i-k][j-k][1] !== whoseTurn) {
+                            moves.push([i-k,j-k]);
                         }
-                        else {
-                            if (curBoard[i][j][1] === whoseTurn) {
-                                moves.push([i-k,j-k]);
-                            }
-                            disallowKing.push([i-k-1,j-k-1]);
-                        }
+                        if (curBoard[i-k][j-k][0] === '♚') disallowKing.push([i-k-1,j-k-1]);
                         break;
                     }
                 }
@@ -434,12 +352,12 @@ function possibleMoves() {
     return [dicMoves, disallowKingSquare];
 }
 
-//check is a square is unavailable for the king because under attack by byWho
 function isSquareUnderAttack(ni, nj, byWho, disallowKingSquare) {
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
             disallowSquares = disallowKingSquare[[i,j]];
             if (curBoard[i][j][1] === byWho) {
+                console.log(disallowSquares);
                 for (let move of disallowSquares) {
                     if (move[0] === ni && move[1] === nj) return true
                 }
@@ -450,7 +368,6 @@ function isSquareUnderAttack(ni, nj, byWho, disallowKingSquare) {
     return false;
 }
 
-//add possible moves the king can make to dicMoves, using isSquareUnderAttack()
 function addPossibleMovesKing(dicMoves, disallowKingSquare) {
     let moves = [];
     for (let i = 0; i < 8; i++) {
@@ -468,7 +385,6 @@ function addPossibleMovesKing(dicMoves, disallowKingSquare) {
                     }
                 }
 
-                //castle for white
                 if (curBoard[i][j][1] === 'w' && i === 7 && j === 4) {
                     if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'w') {
                         moves.push([i,j+2]);
@@ -478,7 +394,6 @@ function addPossibleMovesKing(dicMoves, disallowKingSquare) {
                     }
                 }
 
-                //castle for black
                 if (curBoard[i][j][1] === 'b' && i === 0 && j === 4) {
                     if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'b') {
                         moves.push([i,j+2]);
@@ -487,7 +402,7 @@ function addPossibleMovesKing(dicMoves, disallowKingSquare) {
                         moves.push([i,j-2]);
                     }
                 }
-
+                
                 dicMoves[[i,j]] = moves;
             }
         }
