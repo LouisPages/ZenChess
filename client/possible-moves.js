@@ -1,6 +1,5 @@
 //calculate every possible moves and store them into a dictonary containing each piece's accesible square 
 function possibleMoves() {
-    console.log(lastMove);
 
     let dicMoves = {};
     let disallowKingSquare = {};
@@ -471,20 +470,20 @@ function addPossibleMovesKing(dicMoves, disallowKingSquare) {
 
                 //castle for white
                 if (curBoard[i][j][1] === 'w' && i === 7 && j === 4) {
-                    if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜') {
+                    if (castle['wright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'w') {
                         moves.push([i,j+2]);
                     }
-                    if (castle['wleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜') {
+                    if (castle['wleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜'  && curBoard[i][j-4][1] === 'w') {
                         moves.push([i,j-2]);
                     }
                 }
 
                 //castle for black
                 if (curBoard[i][j][1] === 'b' && i === 0 && j === 4) {
-                    if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜') {
+                    if (castle['bright'] && curBoard[i][j+1][0] === '' && curBoard[i][j+2][0] === '' && curBoard[i][j+3][0] === '♜' && curBoard[i][j+3][1] === 'b') {
                         moves.push([i,j+2]);
                     }
-                    if (castle['bleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜') {
+                    if (castle['bleft'] && curBoard[i][j-1][0] === '' && curBoard[i][j-2][0] === '' && curBoard[i][j-3][0] === '' && curBoard[i][j-4][0] === '♜' && curBoard[i][j-4][1] === 'b') {
                         moves.push([i,j-2]);
                     }
                 }

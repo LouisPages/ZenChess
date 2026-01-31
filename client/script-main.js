@@ -9,25 +9,25 @@
 //     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 // ];
 
-//board to test en passant/promotion
 let curBoard = [
-    [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-    [['♟', 'b', true], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+    [[''], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], ['♟', 'w', false], ['♟', 'w', false], [''], [''], [''], [''], ['']],
-    [[''], ['♟', 'b', false], ['♟', 'b', false], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [['♟', 'w', true], [''], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
     [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
 
-let whoseTurn = 'b';
+let whoseTurn = 'w';
 let shownMoves = [];
 let toMove = [];
 let tabPieces = ['♜', '♛', '♚', '♝', '♞', '♟'];
 let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
 let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 let lastMove = null;
+let kingToMove = false;
 
 
 //create the board with empty cases
@@ -163,8 +163,14 @@ function makeMove(i,j) {
             castle[whoseTurn + 'right'] = false;
         }
         lastMove = ['♚', [old_i, old_j], [i, j]];
+        kingToMove = false;
     }
     else {
+        if (piece === '♜') {
+            //prevent castling with the rook that is about to move
+            if (old_j === '0') castle[whoseTurn + 'left'] = false;
+            if (old_j === '7') castle[whoseTurn + 'right'] = false;
+        }
         curBoard[i][j] = [piece, whoseTurn];
         lastMove = [piece, [old_i, old_j], [i, j]];
     }
@@ -193,17 +199,15 @@ document.addEventListener('click', function(clicked) {
             divSquareMovedPiece.classList.remove("pointer");
             
             makeMove(i,j);
-
-            //refresh the board
             refreshBoard();
             
-            if (checkMate()) {
-
+            whoseTurn = nextPlayer(whoseTurn);
+            if (mateCheck()) {
+                kingToMove = true;
             }
-            else whoseTurn = nextPlayer(whoseTurn);
         }
         else {      
-            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn) {
+            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && ((kingToMove && curBoard[i][j][0] === '♚') || !kingToMove)) {
                 document.getElementById('svg-background').classList.add('clip-board');
                 
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
@@ -225,8 +229,15 @@ function nextPlayer(whoseTurn) {
     return whoseTurn === 'w' ? 'b' : 'w'
 }
 
-function checkMate() {
-
+function mateCheck() {
+    let [_, disallowKingSquare] = possibleMoves();
+    for (i = 0; i < 7; i++) {
+        for (j = 0; j < 7; j++) {
+            if (curBoard[i][j][0] === '♚' && curBoard[i][j][1] === whoseTurn) {
+                return isSquareUnderAttack(i, j, nextPlayer(whoseTurn), disallowKingSquare);
+            }
+        }
+    }
 }
 
 function main() {
