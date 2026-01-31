@@ -251,12 +251,18 @@ function mateCheck() {
 
 //show a message if there is checkMate
 function checkCheckMate(dicMoves, kingPos) {
-    if (kingToMove && dicMoves[kingPos].length != 0 && Object.keys(dicMoves).every(key => {
-        if (curBoard[parseInt(key[0])][parseInt(key[2])][1] === whoseTurn) {console.log(key, dicMoves[key]); return(dicMoves[key].length === 0);}
-        else return true 
+    let kingKey = kingPos.join(',');
+    console.log(dicMoves[kingKey]);
+    
+    if (kingToMove && dicMoves[kingKey] && dicMoves[kingKey].length === 0 && Object.keys(dicMoves).every(key => {
+        let coords = key.split(',');
+        if (curBoard[parseInt(coords[0])][parseInt(coords[1])][1] === whoseTurn) {
+            return dicMoves[key].length === 0;
+        }
+        else return true;
     })) {
         //todo
-        location.reload();                
+        console.log("check mate");               
     }
 }
 

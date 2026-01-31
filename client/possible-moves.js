@@ -357,7 +357,6 @@ function isSquareUnderAttack(ni, nj, byWho, disallowKingSquare) {
         for (let j = 0; j < 8; j++) {
             disallowSquares = disallowKingSquare[[i,j]];
             if (curBoard[i][j][1] === byWho) {
-                console.log(disallowSquares);
                 for (let move of disallowSquares) {
                     if (move[0] === ni && move[1] === nj) return true
                 }
