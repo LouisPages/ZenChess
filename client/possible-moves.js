@@ -1,5 +1,7 @@
 //calculate every possible moves and store them into a dictonary containing each piece's accesible square 
 function possibleMoves() {
+    console.log(lastMove);
+
     let dicMoves = {};
     let disallowKingSquare = {};
 
@@ -117,6 +119,11 @@ function possibleMoves() {
                             moves.push([i-1,j+1]);
                         }
                     }
+                    //"en passant" for white
+                    if (lastMove != null && i === 3 && lastMove[0] === '♟' && lastMove[1][0] === '1' && lastMove[2][0] === '3') {
+                        if (j > 0 && lastMove[1][1] === String(j-1)) moves.push([i-1,j-1]);
+                        if (j < 7 && lastMove[1][1] === String(j+1)) moves.push([i-1,j+1]);
+                    }
                 }
                 else {
                     if (i+1 <= 7 && j-1 >= 0) {
@@ -138,6 +145,11 @@ function possibleMoves() {
                         if (i+1 <= 7 && j+1 <= 7 && tabPieces.includes(curBoard[i+1][j+1][0]) && curBoard[i+1][j+1][1] === 'w') {
                             moves.push([i+1,j+1]);
                         }
+                    }
+                    //"en passant" for black
+                    if (lastMove != null && i === 4 && lastMove[0] === '♟' && lastMove[1][0] === '6' && lastMove[2][0] === '4') {
+                        if (j > 0 && lastMove[1][1] === String(j-1)) moves.push([i+1,j-1]);
+                        if (j < 7 && lastMove[1][1] === String(j+1)) moves.push([i+1,j+1]);
                     }
                 }
             }

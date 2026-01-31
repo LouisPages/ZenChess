@@ -9,22 +9,25 @@
 //     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 // ];
 
+//board to test en passant/promotion
 let curBoard = [
     [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-    [['♟', 'b', true], ['♟', 'w', false], [''], [''], [''], [''], [''], ['']],
+    [['♟', 'b', true], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], ['♟', 'w', false], ['♟', 'w', false], [''], [''], [''], [''], ['']],
+    [[''], ['♟', 'b', false], ['♟', 'b', false], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [['♟', 'w', true], ['♟', 'b', false], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+    [['♟', 'w', true], [''], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
     [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
+
 let whoseTurn = 'b';
 let shownMoves = [];
 let toMove = [];
 let tabPieces = ['♜', '♛', '♚', '♝', '♞', '♟'];
 let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
 let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
+let lastMove = null;
 
 
 //create the board with empty cases
@@ -93,6 +96,7 @@ function makeMove(i,j) {
                     promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
                     curBoard[i][j] = [promotionPiece, 'w'];
                     divProm.style.display = "none";
+                    lastMove = ['♟', [old_i, old_j], [i,j]];
                     refreshBoard();
                     document.removeEventListener('click', holdPromotion);
                 }
@@ -106,7 +110,6 @@ function makeMove(i,j) {
             });
         }
         else if (i === '7') {
-            console.log("coucou");
             //black pawn promotion
             divProm = document.getElementById('b-pawn-promotion');
             divProm.style.display = "flex";
@@ -118,6 +121,7 @@ function makeMove(i,j) {
                     promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
                     curBoard[i][j] = [promotionPiece, 'b'];
                     divProm.style.display = "none";
+                    lastMove = ['♟', [old_i, old_j], [i,j]];
                     refreshBoard();
                     document.removeEventListener('click', holdPromotion);
                 }
@@ -130,7 +134,14 @@ function makeMove(i,j) {
                 }
             });
         }
-        else curBoard[i][j] = ['♟', whoseTurn, false];
+        else {
+            if (curBoard[i][j][0] === '' && (parseInt(j)+1 === parseInt(old_j) || parseInt(j)-1 === parseInt(old_j))) {
+                if (parseInt(i)+1 === parseInt(old_i)) curBoard[old_i][j] = [''];
+                if (parseInt(i)-1 === parseInt(old_i)) curBoard[old_i][j] = [''];
+            }
+            curBoard[i][j] = ['♟', whoseTurn, false];
+            lastMove = ['♟', [old_i, old_j], [i,j]];
+        }
     }
     else if (piece === '♚') {
         curBoard[i][j] = [piece, whoseTurn];
@@ -151,9 +162,11 @@ function makeMove(i,j) {
             castle[whoseTurn + 'left'] = false;
             castle[whoseTurn + 'right'] = false;
         }
+        lastMove = ['♚', [old_i, old_j], [i, j]];
     }
     else {
         curBoard[i][j] = [piece, whoseTurn];
+        lastMove = [piece, [old_i, old_j], [i, j]];
     }
             
     //remove the piece from its original square
