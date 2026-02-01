@@ -6,7 +6,7 @@ app = Flask(__name__, static_folder='client')
 #serve html file
 @app.route('/')
 def index():
-    return send_from_directory('client', 'main.html')
+    return send_from_directory('client', 'index.html')
 
 #serve static files
 @app.route('/<path:path>')
