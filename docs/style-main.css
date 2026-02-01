@@ -17,6 +17,8 @@ body {
     height: 100vh;
     background: linear-gradient(to top right, #080c1d, #121b3d);
     position: relative;
+    font-variant-emoji: text !important;
+    font-family: "DejaVu Sans", "Noto Sans Symbols", "Segoe UI Symbol", sans-serif;
 }
 
 

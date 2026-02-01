@@ -1,13 +1,8 @@
-/*force all chess pieces to use a standard Unicode font, not Apple Color Emoji*/
-body {
-    font-variant-emoji: text !important;
-}
-
-
 /*reponsiveness for phones*/
 @media screen and (max-width: 480px) {
     #board-container {
         width: 360px;
+        box-shadow: 0 0 5px white;
     }
     
     #chess-board {
