@@ -367,31 +367,26 @@ function isSquareUnderAttack(ni, nj, byWho, disallowKingSquare) {
     return false;
 }
 
+//test if a piece is pinned to its king and thus unable to do the move moveI, moveJ by simulating
+//this move and checking if the king then is threaten
 function isPiecePinned(pieceI, pieceJ, moveI, moveJ) {
     let tempBoard = JSON.parse(JSON.stringify(curBoard));
     let pieceData = tempBoard[pieceI][pieceJ];
     tempBoard[moveI][moveJ] = pieceData;
     tempBoard[pieceI][pieceJ] = [''];
     
-    let kingI, kingJ;
-    for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-            if (tempBoard[i][j][0] === '♚' && tempBoard[i][j][1] === whoseTurn) {
-                kingI = i;
-                kingJ = j;
-                break;
-            }
-        }
-    }
+    let [kingI, kingJ] = findKing(whoseTurn);
     
     let originalBoard = curBoard;
     curBoard = tempBoard;
     let [_, disallowKingSquare] = possibleMoves();
+    res =  isSquareUnderAttack(kingI, kingJ, nextPlayer(whoseTurn), disallowKingSquare);
     curBoard = originalBoard;
     
-    return isSquareUnderAttack(kingI, kingJ, nextPlayer(whoseTurn), disallowKingSquare);
+    return res;
 }
 
+//filter the moves of dicMoves with the function isPiecePinned
 function filterPinnedMoves(dicMoves) {
     let filteredMoves = {};
     for (let key in dicMoves) {

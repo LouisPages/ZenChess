@@ -1,13 +1,13 @@
-// let curBoard = [
-//     [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♛', 'b'], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-//     [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
-//     [[''], [''], [''], [''], [''], [''], [''], ['']],
-//     [[''], [''], [''], [''], [''], [''], [''], ['']],
-//     [[''], [''], [''], [''], [''], [''], [''], ['']],
-//     [[''], [''], [''], [''], [''], [''], [''], ['']],
-//     [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-//     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
-// ];
+let curBoard = [
+    [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♛', 'b'], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+    [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
+];
 
 // //board to test en passant/promotion
 // let curBoard = [
@@ -21,26 +21,14 @@
 //     [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 // ];
 
-let curBoard = [
-    [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-    [[''], [''],  ['♟', 'w', true], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-    [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
-];
-
-let whoseTurn = 'b';
+let whoseTurn = 'w';
 let shownMoves = [];
 let toMove = [];
 let tabPieces = ['♜', '♛', '♚', '♝', '♞', '♟'];
 let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
 let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 let lastMove = null;
-let kingToMove = false;
-
+let kingCheck = false;
 
 //create the board with empty cases
 function initBoard() {
@@ -86,7 +74,6 @@ function clearShownLegalMoves() {
         divSquare.classList.remove("allowed-move");
     }
     shownMoves = [];
-
     document.getElementById('svg-background').classList.remove('clip-board');
 }
 
@@ -101,7 +88,6 @@ function makeMove(i,j) {
             divProm.style.display = "flex";
             divPromChoices = document.getElementById('w-promotion-choices');
             divPromChoices.style.left = String(80*j-320) + "px";
-
             document.addEventListener('click', function holdPromotion(clicked) {
                 if (clicked.target.id.slice(0,9) === 'promotion') {
                     promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
@@ -109,11 +95,10 @@ function makeMove(i,j) {
                     divProm.style.display = "none";
                     lastMove = ['♟', [old_i, old_j], [i,j]];
                     refreshBoard();
-
-                    //check is the promotion make a check
+                    //check if the promotion makes a check
                     let [mate, kingPos] = mateCheck();
                     if (mate) {
-                        kingToMove = true;
+                        kingCheck = true;
                         mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
                         mateKingSquare.classList.add('square-red');
                     }
@@ -121,7 +106,6 @@ function makeMove(i,j) {
                     dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
                     dicMovesCheck = filterPinnedMoves(dicMovesCheck);
                     checkCheckMate(dicMovesCheck, kingPos);
-
                     document.removeEventListener('click', holdPromotion);
                 }
                 if (clicked.target.id === "w-btn-cancel-promotion") {
@@ -139,7 +123,6 @@ function makeMove(i,j) {
             divProm.style.display = "flex";
             divPromChoices = document.getElementById('b-promotion-choices');
             divPromChoices.style.left = String(80*j-320) + "px";
-
             document.addEventListener('click', function holdPromotion(clicked) {
                 if (clicked.target.id.slice(0,9) === 'promotion') {
                     promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
@@ -147,11 +130,10 @@ function makeMove(i,j) {
                     divProm.style.display = "none";
                     lastMove = ['♟', [old_i, old_j], [i,j]];
                     refreshBoard();
-
-                    //check is the promotion make a check
+                    //check if the promotion makes a check
                     let [mate, kingPos] = mateCheck();
                     if (mate) {
-                        kingToMove = true;
+                        kingCheck = true;
                         mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
                         mateKingSquare.classList.add('square-red');
                     }
@@ -159,7 +141,6 @@ function makeMove(i,j) {
                     dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
                     dicMovesCheck = filterPinnedMoves(dicMovesCheck);
                     checkCheckMate(dicMovesCheck, kingPos);
-
                     document.removeEventListener('click', holdPromotion);
                 }
                 if (clicked.target.id === "b-btn-cancel-promotion") {
@@ -201,7 +182,6 @@ function makeMove(i,j) {
         }
         lastMove = ['♚', [old_i, old_j], [i, j]];
         document.getElementById('square-' + old_i + old_j).classList.remove('square-red');
-        kingToMove = false;
     }
     else {
         if (piece === '♜') {
@@ -212,17 +192,18 @@ function makeMove(i,j) {
         curBoard[i][j] = [piece, whoseTurn];
         lastMove = [piece, [old_i, old_j], [i, j]];
     }
-            
+    
+    let [kingI, kingJ] = findKing(whoseTurn);
+    document.getElementById('square-' + String(kingI) + String(kingJ)).classList.remove('square-red');
+    kingCheck = false;
     //remove the piece from its original square
     curBoard[toMove[0]][toMove[1]] = [''];
-
     toMove = [];
 }
 
 document.addEventListener('click', function(clicked) {
     clearShownLegalMoves();
     refreshBoard();
-
     if (['piece','squar'].includes(clicked.target.id.slice(0,5))) {
         let [dicMoves, disallowKingSquare] = possibleMoves();
         dicMoves = addPossibleMovesKing(dicMoves, disallowKingSquare);
@@ -243,22 +224,21 @@ document.addEventListener('click', function(clicked) {
             whoseTurn = nextPlayer(whoseTurn);
             let [mate, kingPos] = mateCheck();
             if (mate) {
-                kingToMove = true;
-
-                //change the colo of the king's square to red
+                kingCheck = true;
+                //change the color of the king's square to red
                 mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
                 mateKingSquare.classList.add('square-red');
             } else {
-                kingToMove = false;
+                kingCheck = false;
             }
             let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
             dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
             dicMovesCheck = filterPinnedMoves(dicMovesCheck);
             checkCheckMate(dicMovesCheck, kingPos);
-            
         }
         else {      
-            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && ((kingToMove && curBoard[i][j][0] === '♚' && dicMoves[[i,j]].length != 0) || (!kingToMove && dicMoves[[i,j]].length != 0))) {
+            //fixed: Allow any piece to move if it has legal moves (filterPinnedMoves handles check restrictions)
+            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && dicMoves[[i,j]].length != 0) {
                 document.getElementById('svg-background').classList.add('clip-board');
                 
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
@@ -275,12 +255,20 @@ document.addEventListener('click', function(clicked) {
     }
 }, true);
 
+function findKing(color) {
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if (curBoard[i][j][0] === '♚' && curBoard[i][j][1] === color) return [i,j];
+        }
+    }
+}
+
 //change player turn
 function nextPlayer(whoseTurn) {
     return whoseTurn === 'w' ? 'b' : 'w'
 }
 
-//check if the king is mate
+//check if the king is in check
 function mateCheck() {
     let [_, disallowKingSquare] = possibleMoves();
     for (let i = 0; i < 8; i++) {
@@ -295,17 +283,20 @@ function mateCheck() {
 //show a message if there is checkMate
 function checkCheckMate(dicMoves, kingPos) {
     let kingKey = kingPos.join(',');
-    console.log(dicMoves[kingKey]);
     
-    if (kingToMove && dicMoves[kingKey] && dicMoves[kingKey].length === 0 && Object.keys(dicMoves).every(key => {
+    if (dicMoves[kingKey] && dicMoves[kingKey].length === 0 && Object.keys(dicMoves).every(key => {
         let coords = key.split(',');
         if (curBoard[parseInt(coords[0])][parseInt(coords[1])][1] === whoseTurn) {
             return dicMoves[key].length === 0;
         }
         else return true;
     })) {
-        //todo
-        console.log("check mate");               
+        if (kingCheck) {
+            console.log("check mate"); 
+        }
+        else {
+            console.log("stale mate");        
+        }   
     }
 }
 
