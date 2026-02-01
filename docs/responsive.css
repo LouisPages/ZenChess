@@ -1,4 +1,4 @@
-/*reponsiveness for phones*/
+/*reponsiveness for most phones*/
 @media screen and (max-width: 480px) {
     #board-container {
         width: 360px;
@@ -55,6 +55,71 @@
             calc(50% + 176px) calc(50% + 176px), 
             calc(50% - 176px) calc(50% + 176px), 
             calc(50% - 176px) 100%, 
+            100% 100%, 
+            100% 0%
+        );
+    }
+}
+
+
+
+/*reponsiveness for small phones*/
+@media screen and (max-width: 380px) {
+    #board-container {
+        width: 340px;
+        box-shadow: 0 0 3px white;
+    }
+    
+    #chess-board {
+        grid-template-columns: repeat(8, 42px);
+        grid-template-rows: repeat(8, 42px);
+    }
+    
+    .square {
+        font-size: 38px;
+    }
+    
+    .allowed-move {
+        width: 42px;
+        height: 42px;
+    }
+    
+    #w-promotion-choices {
+        font-size: 38px;
+        grid-template-rows: repeat(4, 42px) 24px;
+        grid-template-columns: repeat(1, 42px);
+        top: -176px;
+    }
+    
+    #b-promotion-choices {
+        font-size: 38px;
+        grid-template-rows: 24px repeat(4, 42px);
+        grid-template-columns: repeat(1, 42px);
+        top: -24px;
+    }
+    
+    .w-cancel-promotion,
+    .b-cancel-promotion {
+        font-size: 18px;
+    }
+    
+    .moon {
+        width: 75px;
+        height: 75px;
+        right: 30px;
+        top: 20px;
+    }
+    
+    #svg-background.clip-board {
+        clip-path: polygon(
+            0% 0%, 
+            0% 100%, 
+            calc(50% - 169px) 100%, 
+            calc(50% - 169px) calc(50% - 169px), 
+            calc(50% + 169px) calc(50% - 169px), 
+            calc(50% + 169px) calc(50% + 169px), 
+            calc(50% - 169px) calc(50% + 169px), 
+            calc(50% - 169px) 100%, 
             100% 100%, 
             100% 0%
         );
