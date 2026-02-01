@@ -8,3 +8,66 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+
+/*reponsiveness for phones*/
+@media screen and (max-width: 480px) {
+    #board-container {
+        width: 360px;
+    }
+    
+    #chess-board {
+        grid-template-columns: repeat(8, 44px);
+        grid-template-rows: repeat(8, 44px);
+    }
+    
+    .square {
+        font-size: 40px;
+    }
+    
+    .allowed-move {
+        width: 44px;
+        height: 44px;
+    }
+    
+    #w-promotion-choices {
+        font-size: 40px;
+        grid-template-rows: repeat(4, 44px) 24px;
+        grid-template-columns: repeat(1, 44px);
+        top: -176px;
+    }
+    
+    #b-promotion-choices {
+        font-size: 40px;
+        grid-template-rows: 24px repeat(4, 44px);
+        grid-template-columns: repeat(1, 44px);
+        top: -24px;
+    }
+    
+    .w-cancel-promotion,
+    .b-cancel-promotion {
+        font-size: 18px;
+    }
+    
+    .moon {
+        width: 90px;
+        height: 90px;
+        right: 30px;
+        top: 20px;
+    }
+    
+    #svg-background.clip-board {
+        clip-path: polygon(
+            0% 0%, 
+            0% 100%, 
+            calc(50% - 176px) 100%, 
+            calc(50% - 176px) calc(50% - 176px), 
+            calc(50% + 176px) calc(50% - 176px), 
+            calc(50% + 176px) calc(50% + 176px), 
+            calc(50% - 176px) calc(50% + 176px), 
+            calc(50% - 176px) 100%, 
+            100% 100%, 
+            100% 0%
+        );
+    }
+}
