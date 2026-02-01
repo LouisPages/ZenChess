@@ -1,12 +1,6 @@
 /*force all chess pieces to use a standard Unicode font, not Apple Color Emoji*/
-.square,
-#w-promotion-choices > div,
-#b-promotion-choices > div {
-    font-family: "DejaVu Sans", "Segoe UI Symbol", "Noto Sans Symbols", "Arial Unicode MS", sans-serif !important;
-    /*prevent emoji/color font rendering*/
+body {
     font-variant-emoji: text !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 
