@@ -23,6 +23,16 @@ body {
     position: relative;
 }
 
+.pointer:hover {
+    cursor: pointer;
+}
+
+.prevent-select {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 
 
 
@@ -61,8 +71,6 @@ svg background
 chess board
 -----------------------------------*/
 
-
-
 #board-container {
     position: relative;
     top: 50%;
@@ -87,10 +95,57 @@ chess board
     gap: 0;
 }
 
+.square-bright {
+    background-color: #dbb17d;
+}
+
+.square-dark {
+    background-color: #a3610f;
+}
+
+.square-red {
+    background-color: rgb(220, 43, 43);
+}
+
+#square-00 {
+    border-top-left-radius: 3%;
+}
+
+#square-07 {
+    border-top-right-radius: 3%;
+}
+
+#square-70 {
+    border-bottom-left-radius: 3%;
+}
+
+#square-77 {
+    border-bottom-right-radius: 3%;
+}
+
+.square {
+    font-size: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.white-piece {
+    color: white;
+}
+
+
+/*------------------------------------------*/
+/*failed attempt not to display emoji on ios*/
+/*------------------------------------------*/
 span {
     font-variant-emoji: none;
     font-variant: normal;
 }
+
+/*----------------*/
+/*promotion choice*/
+/*----------------*/
 
 #w-pawn-promotion {
     position: relative;
@@ -142,54 +197,9 @@ span {
     padding-top: 10px;
 }
 
-.square-bright {
-    background-color: #dbb17d;
-}
-
-.square-dark {
-    background-color: #a3610f;
-}
-
-.square-red {
-    background-color: rgb(220, 43, 43);
-}
-
-#square-00 {
-    border-top-left-radius: 3%;
-}
-
-#square-07 {
-    border-top-right-radius: 3%;
-}
-
-#square-70 {
-    border-bottom-left-radius: 3%;
-}
-
-#square-77 {
-    border-bottom-right-radius: 3%;
-}
-
-.square {
-    font-size: 75px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.white-piece {
-    color: white;
-}
-
-.pointer:hover {
-    cursor: pointer;
-}
-
-.prevent-select {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+/*-------------*/
+/*allowed moves*/
+/*-------------*/
 
 .allowed-move {
     background-color: rgb(165, 157, 157);
@@ -203,21 +213,36 @@ span {
     opacity: 0.8;
 }
 
+/*---------------*/
+/*welcome message*/
+/*---------------*/
 
 #message {
     position: absolute;
     z-index: 4;
     text-align: center;
     color: white;   
-    height: 550px;
-    width: 550px;
+    height: 640px;
+    width: 640px;
     background-color: #121b3d;
     opacity: 0.9;
-    border-radius: 1%;
+    border-radius: 0.4%;
     justify-content: center;
     align-content: center;
+    transition: opacity 0.5s ease;
 }
 
+#message-to-appear {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/*appearance animation*/
+#message-to-appear.message-appearance {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 #h1-welcome {
     font-family: "Baskervville SC", serif;
@@ -240,8 +265,11 @@ span {
     border-bottom: 0.5px solid white;
 }
 
+/*-----------------*/
+/*game over message*/
+/*-----------------*/
 
-#checkmate-message {
+#game-over-message {
     font-family: "Baskervville", serif;
     font-size: 45px;
 }

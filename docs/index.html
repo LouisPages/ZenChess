@@ -5,7 +5,9 @@
     <title>ZenChess</title>
     
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" type="text/css" href="style-main.css">
+    
+    <link rel="stylesheet" type="text/css" href="style/style-main.css">
+    <link rel="stylesheet" type="text/css" href="style/style-menu.css">
     <link rel="stylesheet" type="text/css" href="starry-sky/starry-sky-style.css">
     <link rel="stylesheet" type="text/css" href="responsive.css">
 </head>
@@ -61,11 +63,13 @@
     <!--chess board-->
     <div id="board-container" class="prevent-select">
         <div id="message">
-            <h1 id="h1-welcome">Welcome to ZenChess</h1>
-            <div id="mode-choice">
-                Play against :  
-                <span id="friend-play" class="underlined-button pointer">a friend</span>,
-                <span id="zenbot-play" class="underlined-button pointer">ZenBot</span>
+            <div id="message-to-appear">
+                <h1 id="h1-welcome">Welcome to ZenChess</h1>
+                <div id="mode-choice">
+                    Play against :  
+                    <span id="friend-play" class="underlined-button pointer">a friend</span>,
+                    <span id="zenbot-play" class="underlined-button pointer">ZenBot</span>
+                </div>
             </div>
         </div>
         <div id="chess-board">
