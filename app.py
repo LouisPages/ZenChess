@@ -1,17 +1,20 @@
 from flask import Flask, send_from_directory
 import os
 
-app = Flask(__name__, static_folder='client')
+app = Flask(__name__, static_folder='docs')
 
 #serve html file
 @app.route('/')
 def index():
-    return send_from_directory('client', 'index.html')
+    return send_from_directory('docs', 'index.html')
 
 #serve static files
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory('client', path)
+    return send_from_directory('docs', path)
+
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

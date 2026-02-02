@@ -13,8 +13,9 @@ moon.addEventListener('mouseleave', function() {
 // Floating icons creation
 const floatingIcons = document.createElement('div');
 floatingIcons.id = 'floating-icons';
-floatingIcons.innerHTML = `
-    <div class="floating-icon pointer" id="icon-info" title="Info">
+
+/*
+<div class="floating-icon pointer" id="icon-info" title="Info">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M12 1v6m0 6v6m5.6-14.6l-4.2 4.2m0 6.8l4.2 4.2M23 12h-6m-6 0H5m14.6 5.6l-4.2-4.2m-6.8 0l-4.2 4.2"></path>
@@ -34,6 +35,9 @@ floatingIcons.innerHTML = `
             <path d="M4.93 4.93L7.76 7.76 8.76 6.76 7.76 5.76 4.93 4.93z"></path>
         </svg>
     </div>
+*/
+
+floatingIcons.innerHTML = `
     <div class="floating-icon pointer" id="icon-resign" title="Resign">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
@@ -42,13 +46,9 @@ floatingIcons.innerHTML = `
     </div>
     <div class="floating-icon pointer" id="icon-draw" title="Offer Draw">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M8 11V9a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"></path>
-            <path d="M12 11V9a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"></path>
-            <path d="M8 11v2a2 2 0 0 1-2 2H4"></path>
-            <path d="M16 11v2a2 2 0 0 0 2 2h2"></path>
-            <path d="M8 15v2a2 2 0 0 1-2 2H4"></path>
-            <path d="M16 15v2a2 2 0 0 0 2 2h2"></path>
-            <rect x="10" y="9" width="4" height="6" rx="1"></rect>
+            <path d="M11 12h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 14"></path>
+            <path d="m7 18 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"></path>
+            <path d="m2 13 6 6"></path>
         </svg>
     </div>
     <div class="floating-icon pointer" id="icon-flip" title="Flip Board">
@@ -133,14 +133,14 @@ colorPanel.innerHTML = `
 `;
 document.body.appendChild(colorPanel);
 
-// Icon click handlers
-document.getElementById('icon-info').addEventListener('click', function() {
-    togglePanel('info-panel');
-});
+// // Icon click handlers
+// document.getElementById('icon-info').addEventListener('click', function() {
+//     togglePanel('info-panel');
+// });
 
-document.getElementById('icon-colors').addEventListener('click', function() {
-    togglePanel('color-panel');
-});
+// document.getElementById('icon-colors').addEventListener('click', function() {
+//     togglePanel('color-panel');
+// });
 
 document.getElementById('icon-resign').addEventListener('click', function() {
     if (confirm('Are you sure you want to resign?')) {
@@ -164,18 +164,7 @@ document.getElementById('icon-draw').addEventListener('click', function() {
 });
 
 document.getElementById('icon-flip').addEventListener('click', function() {
-    const board = document.getElementById('chess-board');
-    if (board.style.transform === 'rotate(180deg)') {
-        board.style.transform = 'rotate(0deg)';
-        document.querySelectorAll('.square').forEach(square => {
-            square.style.transform = 'rotate(0deg)';
-        });
-    } else {
-        board.style.transform = 'rotate(180deg)';
-        document.querySelectorAll('.square').forEach(square => {
-            square.style.transform = 'rotate(180deg)';
-        });
-    }
+    flipBoard();
 });
 
 // Close panel buttons

@@ -3,22 +3,22 @@ let curBoard = [
     [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], ['♝', 'w'], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], ['♛', 'w'], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], [''], [''], ['']],
     [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], [''], ['♚', 'w'], [''], ['♞', 'w'], ['♜', 'w']]
+    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
 ];
 
-// //board to test en passant/promotion
+//board to test checkMate
 // let curBoard = [
-//     [['♜', 'b'], [''], [''], [''], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
-//     [['♟', 'b', true], [''], [''], ['♟', 'b', true], [''], [''], [''], ['']],
+//     [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♛', 'b'], ['♚', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']],
+//     [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
 //     [[''], [''], [''], [''], [''], [''], [''], ['']],
-//     [[''], ['♟', 'w', false], ['♟', 'w', false], [''], [''], [''], [''], ['']],
-//     [[''], ['♟', 'b', false], ['♟', 'b', false], [''], [''], [''], [''], ['']],
 //     [[''], [''], [''], [''], [''], [''], [''], ['']],
-//     [['♟', 'w', true], [''], [''], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-//     [['♜', 'w'], [''], [''], [''], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
+//     [[''], [''], ['♝', 'w'], [''], [''], [''], [''], ['']],
+//     [[''], [''], [''], [''], [''], ['♛', 'w'], [''], ['']],
+//     [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+//     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], [''], ['♚', 'w'], [''], ['♞', 'w'], ['♜', 'w']]
 // ];
 
 let whoseTurn = 'w';
@@ -223,6 +223,7 @@ document.addEventListener('click', function(clicked) {
             refreshBoard();
             
             whoseTurn = nextPlayer(whoseTurn);
+            
             let [mate, kingPos] = mateCheck();
             if (mate) {
                 kingCheck = true;
@@ -235,7 +236,9 @@ document.addEventListener('click', function(clicked) {
             let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
             dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
             dicMovesCheck = filterPinnedMoves(dicMovesCheck);
-            checkCheckMate(dicMovesCheck, kingPos);
+            let gameOver = checkCheckMate(dicMovesCheck, kingPos);
+
+            if (mode === "friend" && !gameOver) flipBoard();
         }
         else {      
             //fixed: Allow any piece to move if it has legal moves (filterPinnedMoves handles check restrictions)
@@ -293,33 +296,33 @@ function checkCheckMate(dicMoves, kingPos) {
         else return true;
     })) {
         if (kingCheck) {
-            console.log("Checkmate")
             gameOverMessage(true);
+            return true;
         }
-        else {
-            console.log("Stalemate");     
-            gameOverMessage(false);   
+        else {  
+            gameOverMessage(false); 
+            return true  
         }   
     }
+
+    return false;
 }
 
 
-// function main() {
-//     if (playerColor === 'black') {
-//         curBoard = [
-//             [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♚', 'w'], ['♛', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']],
-//             [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-//             [[''], [''], [''], [''], [''], [''], [''], ['']],
-//             [[''], [''], [''], [''], [''], [''], [''], ['']],
-//             [[''], [''], [''], [''], [''], [''], [''], ['']],
-//             [[''], [''], [''], [''], [''], [''], [''], ['']],
-//             [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
-//             [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♚', 'b'], ['♛', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']]
-//         ];
-//         // whoseTurn = black;
-//         refreshBoard();
-//     }
-// }
+function flipBoard() {
+    const board = document.getElementById('chess-board');
+    if (board.style.transform === 'rotate(180deg)') {
+        board.style.transform = 'rotate(0deg)';
+        document.querySelectorAll('.square').forEach(square => {
+            square.style.transform = 'rotate(0deg)';
+        });
+    } else {
+        board.style.transform = 'rotate(180deg)';
+        document.querySelectorAll('.square').forEach(square => {
+            square.style.transform = 'rotate(180deg)';
+        });
+    }
+}
 
 function onload() {
     initBoard();
