@@ -14,8 +14,8 @@
     <!--starry sky - credits: https://codepen.io/interaminense/pen/QyGbXL -->
     <div id="sky">
         <div class="constellation"></div>
-        <div class="moon">
-            <div class="texture"></div>
+        <div class="moon pointer">
+            <div id="div-texture" class="texture"></div>
         </div>
         <div class="shooting-stars"></div>
     </div>
@@ -59,7 +59,15 @@
 
 
     <!--chess board-->
-    <div id="board-container">
+    <div id="board-container" class="prevent-select">
+        <div id="message">
+            <h1 id="h1-welcome">Welcome to ZenChess</h1>
+            <div id="mode-choice">
+                Play against :  
+                <span id="friend-play" class="underlined-button pointer">a friend</span>,
+                <span id="zenbot-play" class="underlined-button pointer">ZenBot</span>
+            </div>
+        </div>
         <div id="chess-board">
             
         </div>
@@ -83,7 +91,10 @@
         </div>
     </div>
 
+    <script src="ui-script/welcome.js"></script>
     <script src="chess-game-script/possible-moves.js"></script>
     <script src="chess-game-script/script-main.js"></script>
     <script src="starry-sky/starry-sky-script.js"></script>
+    <script src="ui-script/menu.js"></script>
+    <script src="ui-script/checkmate-stalemate.js"></script>
 </body>

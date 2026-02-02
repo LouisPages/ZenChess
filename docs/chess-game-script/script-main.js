@@ -3,10 +3,10 @@ let curBoard = [
     [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
     [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
-    [[''], [''], [''], [''], [''], [''], [''], ['']],
+    [[''], [''], ['♝', 'w'], [''], [''], [''], [''], ['']],
+    [[''], [''], [''], [''], [''], ['♛', 'w'], [''], ['']],
     [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
-    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♛', 'w'], ['♚', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']]
+    [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], [''], ['♚', 'w'], [''], ['♞', 'w'], ['♜', 'w']]
 ];
 
 // //board to test en passant/promotion
@@ -29,6 +29,7 @@ let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
 let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 let lastMove = null;
 let kingCheck = false;
+let mode = '';
 
 //create the board with empty cases
 function initBoard() {
@@ -292,17 +293,36 @@ function checkCheckMate(dicMoves, kingPos) {
         else return true;
     })) {
         if (kingCheck) {
-            console.log("check mate"); 
+            console.log("Checkmate")
+            gameOverMessage(true);
         }
         else {
-            console.log("stale mate");        
+            console.log("Stalemate");     
+            gameOverMessage(false);   
         }   
     }
 }
 
-function main() {
+
+// function main() {
+//     if (playerColor === 'black') {
+//         curBoard = [
+//             [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], ['♚', 'w'], ['♛', 'w'], ['♝', 'w'], ['♞', 'w'], ['♜', 'w']],
+//             [['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true], ['♟', 'w', true]],
+//             [[''], [''], [''], [''], [''], [''], [''], ['']],
+//             [[''], [''], [''], [''], [''], [''], [''], ['']],
+//             [[''], [''], [''], [''], [''], [''], [''], ['']],
+//             [[''], [''], [''], [''], [''], [''], [''], ['']],
+//             [['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true], ['♟', 'b', true]],
+//             [['♜', 'b'], ['♞', 'b'], ['♝', 'b'], ['♚', 'b'], ['♛', 'b'], ['♝', 'b'], ['♞', 'b'], ['♜', 'b']]
+//         ];
+//         // whoseTurn = black;
+//         refreshBoard();
+//     }
+// }
+
+function onload() {
     initBoard();
-    refreshBoard();
 }
 
-window.onload = main();
+window.onload = onload();
