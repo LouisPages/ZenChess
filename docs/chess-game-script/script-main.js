@@ -30,6 +30,7 @@ let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 let lastMove = null;
 let kingCheck = false;
 let mode = '';
+let botColor = 'b'; //by default for now
 
 //create the board with empty cases
 function initBoard() {
@@ -233,12 +234,18 @@ document.addEventListener('click', function(clicked) {
             } else {
                 kingCheck = false;
             }
+
             let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
             dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
             dicMovesCheck = filterPinnedMoves(dicMovesCheck);
             let gameOver = checkCheckMate(dicMovesCheck, kingPos);
 
             if (mode === "friend" && !gameOver) flipBoard();
+            if (mode === "zenbot" && !gameOver) {
+                let dicBotPossibleMoves = dicMovesCheck;
+                playZenBotMove(dicBotPossibleMoves);
+            }
+
         }
         else {      
             //fixed: Allow any piece to move if it has legal moves (filterPinnedMoves handles check restrictions)
@@ -296,11 +303,11 @@ function checkCheckMate(dicMoves, kingPos) {
         else return true;
     })) {
         if (kingCheck) {
-            gameOverMessage(true);
+            gameOverMessage(true, false);
             return true;
         }
         else {  
-            gameOverMessage(false); 
+            gameOverMessage(false, false); 
             return true  
         }   
     }

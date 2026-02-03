@@ -4,7 +4,7 @@ document.addEventListener('click', function(clicked) {
     }
 });
 
-function gameOverMessage(isCheckMate) {
+function gameOverMessage(isCheckMate, isDraw) {
     let messageZone = document.getElementById('message');
     messageZone.style = `
         position: absolute;
@@ -23,12 +23,14 @@ function gameOverMessage(isCheckMate) {
         transition: opacity 0.5s ease, filter 1s ease;
         filter: blur(10px);
     `
-    if (isCheckMate) {
+    if (isCheckMate && !isDraw) {
         //dictionnary to tell which player one
         let dicWinner = {'w': 'Black', 'b': 'White'};
         messageZone.innerHTML = "<div><h1 id='game-over-message'>" + dicWinner[whoseTurn] + " won !</h1><span id='new-game' class='underlined-button pointer'>New game</span></div>"     
     }
-    else messageZone.innerHTML = "<div><h1 id='game-over-message'>Stalemate :(</h1><span id='new-game' class='underlined-button pointer'>New game</span></div>"
+    if (!isCheckMate && !isDraw) messageZone.innerHTML = "<div><h1 id='game-over-message'>Stalemate :(</h1><span id='new-game' class='underlined-button pointer'>New game</span></div>"
+
+    if (!isCheckMate && isDraw) messageZone.innerHTML = "<div><h1 id='game-over-message'>Draw :/</h1><span id='new-game' class='underlined-button pointer'>New game</span></div>"
 
     setTimeout(() => {
         messageZone.style.opacity = "0.9";
