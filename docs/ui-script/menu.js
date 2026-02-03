@@ -53,9 +53,6 @@ function toggleIcons() {
         floatingIcons.classList.add('icons-visible');
     } else {
         floatingIcons.classList.remove('icons-visible');
-        // Close any open panels when hiding icons
-        closePanel('info-panel');
-        closePanel('color-panel');
     }
 }
 

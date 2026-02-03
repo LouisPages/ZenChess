@@ -256,6 +256,21 @@ span {
     font-family: "Baskervville", serif;
 }
 
+
+#color-choice {
+    padding-top: 50px;
+    font-size: 25px;
+    font-family: "Baskervville", serif;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+#color-choice.message-appearance {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .underlined-button {
     font-style: italic;
     font-size: 25px;

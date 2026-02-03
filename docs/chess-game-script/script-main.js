@@ -30,7 +30,7 @@ let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 let lastMove = null;
 let kingCheck = false;
 let mode = '';
-let botColor = 'b'; //by default for now
+let botColor = ''; //used in stack-communication.js
 
 //create the board with empty cases
 function initBoard() {

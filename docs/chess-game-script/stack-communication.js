@@ -7,7 +7,7 @@ async function playZenBotMove(dicBotPossibleMoves) {
     toMove = [chosenMove[0][0], chosenMove[0][1]]
     makeMove(chosenMove[1][0], chosenMove[1][1]);
     refreshBoard();
-    whoseTurn = nextPlayer()
+    whoseTurn = nextPlayer(whoseTurn);
 
     //!!!!!TODO: put this code in one function cause repeated 4 times
     let [mate, kingPos] = mateCheck();
@@ -43,7 +43,6 @@ function getMovesToSend(dicBotPossibleMoves) {
 
 //send the data and receive ZenBot's move 
 async function getZenBotMove(movesToSend) {
-    console.log("coucou ", movesToSend);
     try {
         const response = await fetch('/zenbot/get-bot-move', {
             method: 'POST',
