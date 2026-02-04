@@ -21,6 +21,7 @@ let curBoard = [
 //     [['♜', 'w'], ['♞', 'w'], ['♝', 'w'], [''], ['♚', 'w'], [''], ['♞', 'w'], ['♜', 'w']]
 // ];
 
+
 let whoseTurn = 'w';
 let shownMoves = [];
 let toMove = [];
@@ -29,6 +30,7 @@ let castle = {'wright': true, 'wleft': true, 'bright': true, 'bleft': true};
 let dicPromotion = {quee: '♛', rook: '♜', bish: '♝', knig: '♞'};
 let lastMove = null;
 let kingCheck = false;
+let promotionDone = false;
 let mode = '';
 let botColor = ''; //used in stack-communication.js
 
@@ -80,127 +82,143 @@ function clearShownLegalMoves() {
 }
 
 function makeMove(i,j) {
-    let old_i = toMove[0];
-    let old_j = toMove[1];
-    let piece = curBoard[old_i][old_j][0]; 
-    if (piece === '♟') {
-        if (i === '0') {
-            //white pawn promotion
-            divProm = document.getElementById('w-pawn-promotion');
-            divProm.style.display = "flex";
-            divPromChoices = document.getElementById('w-promotion-choices');
-            divPromChoices.style.left = String(80*j-320) + "px";
-            document.addEventListener('click', function holdPromotion(clicked) {
-                if (clicked.target.id.slice(0,9) === 'promotion') {
-                    promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
-                    curBoard[i][j] = [promotionPiece, 'w'];
-                    divProm.style.display = "none";
-                    lastMove = ['♟', [old_i, old_j], [i,j]];
-                    refreshBoard();
-                    //check if the promotion makes a check
-                    let [mate, kingPos] = mateCheck();
-                    if (mate) {
-                        kingCheck = true;
-                        mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
-                        mateKingSquare.classList.add('square-red');
+    return new Promise((resolve) => {
+        let old_i = toMove[0];
+        let old_j = toMove[1];
+        let piece = curBoard[old_i][old_j][0]; 
+        if (piece === '♟') {
+            if (i === '0') {
+                //white pawn promotion
+                promotionDone = false;
+                divProm = document.getElementById('w-pawn-promotion');
+                divProm.style.display = "flex";
+                divPromChoices = document.getElementById('w-promotion-choices');
+                divPromChoices.style.left = String(80*j-320) + "px";
+                document.addEventListener('click', function holdPromotion(clicked) {
+                    if (clicked.target.id.slice(0,9) === 'promotion') {
+                        promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
+                        curBoard[i][j] = [promotionPiece, 'w'];
+                        divProm.style.display = "none";
+                        lastMove = ['♟', [old_i, old_j], [i,j]];
+                        refreshBoard();
+                        //check if the promotion makes a check
+                        let [mate, kingPos] = mateCheck();
+                        if (mate) {
+                            kingCheck = true;
+                            mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
+                            mateKingSquare.classList.add('square-red');
+                        }
+                        let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
+                        dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
+                        dicMovesCheck = filterPinnedMoves(dicMovesCheck);
+                        checkCheckMate(dicMovesCheck, kingPos);
+                        document.removeEventListener('click', holdPromotion);
+                        
+                        promotionDone = true;
+                        resolve(true);
                     }
-                    let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
-                    dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
-                    dicMovesCheck = filterPinnedMoves(dicMovesCheck);
-                    checkCheckMate(dicMovesCheck, kingPos);
-                    document.removeEventListener('click', holdPromotion);
-                }
-                if (clicked.target.id === "w-btn-cancel-promotion") {
-                    curBoard[old_i][old_j] = ['♟', 'w', false];
-                    whoseTurn = 'w';
-                    divProm.style.display = "none";
-                    refreshBoard();
-                    document.removeEventListener('click', holdPromotion);
-                }
-            });
-        }
-        else if (i === '7') {
-            //black pawn promotion
-            divProm = document.getElementById('b-pawn-promotion');
-            divProm.style.display = "flex";
-            divPromChoices = document.getElementById('b-promotion-choices');
-            divPromChoices.style.left = String(80*j-320) + "px";
-            document.addEventListener('click', function holdPromotion(clicked) {
-                if (clicked.target.id.slice(0,9) === 'promotion') {
-                    promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
-                    curBoard[i][j] = [promotionPiece, 'b'];
-                    divProm.style.display = "none";
-                    lastMove = ['♟', [old_i, old_j], [i,j]];
-                    refreshBoard();
-                    //check if the promotion makes a check
-                    let [mate, kingPos] = mateCheck();
-                    if (mate) {
-                        kingCheck = true;
-                        mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
-                        mateKingSquare.classList.add('square-red');
+                    if (clicked.target.id === "w-btn-cancel-promotion") {
+                        curBoard[old_i][old_j] = ['♟', 'w', false];
+                        whoseTurn = 'w';
+                        divProm.style.display = "none";
+                        refreshBoard();
+                        document.removeEventListener('click', holdPromotion);
+                        
+                        resolve(true);
                     }
-                    let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
-                    dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
-                    dicMovesCheck = filterPinnedMoves(dicMovesCheck);
-                    checkCheckMate(dicMovesCheck, kingPos);
-                    document.removeEventListener('click', holdPromotion);
-                }
-                if (clicked.target.id === "b-btn-cancel-promotion") {
-                    curBoard[old_i][old_j] = ['♟', 'b', false];
-                    whoseTurn = 'b';
-                    divProm.style.display = "none";
-                    refreshBoard();
-                    document.removeEventListener('click', holdPromotion);
-                }
-            });
-        }
-        else {
-            if (curBoard[i][j][0] === '' && (parseInt(j)+1 === parseInt(old_j) || parseInt(j)-1 === parseInt(old_j))) {
-                if (parseInt(i)+1 === parseInt(old_i)) curBoard[old_i][j] = [''];
-                if (parseInt(i)-1 === parseInt(old_i)) curBoard[old_i][j] = [''];
+                });
             }
-            curBoard[i][j] = ['♟', whoseTurn, false];
-            lastMove = ['♟', [old_i, old_j], [i,j]];
+            else if (i === '7') {
+                promotionDone = false;
+                //black pawn promotion
+                divProm = document.getElementById('b-pawn-promotion');
+                divProm.style.display = "flex";
+                divPromChoices = document.getElementById('b-promotion-choices');
+                divPromChoices.style.left = String(80*j-320) + "px";
+                document.addEventListener('click', function holdPromotion(clicked) {
+                    if (clicked.target.id.slice(0,9) === 'promotion') {
+                        promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
+                        curBoard[i][j] = [promotionPiece, 'b'];
+                        divProm.style.display = "none";
+                        lastMove = ['♟', [old_i, old_j], [i,j]];
+                        refreshBoard();
+                        //check if the promotion makes a check
+                        let [mate, kingPos] = mateCheck();
+                        if (mate) {
+                            kingCheck = true;
+                            mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
+                            mateKingSquare.classList.add('square-red');
+                        }
+                        let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
+                        dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
+                        dicMovesCheck = filterPinnedMoves(dicMovesCheck);
+                        checkCheckMate(dicMovesCheck, kingPos);
+                        document.removeEventListener('click', holdPromotion);
+                        
+                        promotionDone = true;
+                        resolve(true);
+                    }
+                    if (clicked.target.id === "b-btn-cancel-promotion" || clicked.target.id(0,9) != 'promotion') {
+                        curBoard[old_i][old_j] = ['♟', 'b', false];
+                        whoseTurn = 'b';
+                        divProm.style.display = "none";
+                        refreshBoard();
+                        document.removeEventListener('click', holdPromotion);
+                        
+                        resolve(true);
+                    }
+                });
+            }
+            else {
+                if (curBoard[i][j][0] === '' && (parseInt(j)+1 === parseInt(old_j) || parseInt(j)-1 === parseInt(old_j))) {
+                    if (parseInt(i)+1 === parseInt(old_i)) curBoard[old_i][j] = [''];
+                    if (parseInt(i)-1 === parseInt(old_i)) curBoard[old_i][j] = [''];
+                }
+                curBoard[i][j] = ['♟', whoseTurn, false];
+                lastMove = ['♟', [old_i, old_j], [i,j]];
+                resolve(false);
+            }
         }
-    }
-    else if (piece === '♚') {
-        curBoard[i][j] = [piece, whoseTurn];
-        //castle right
-        if (j - toMove[1] === 2) {
-            curBoard[toMove[0]][parseInt(toMove[1])+1] = ['♜', whoseTurn];
-            curBoard[toMove[0]][7] = [''];
-            castle[whoseTurn + 'right'] = false;
-        }
-        //castle left
-        else if (j - toMove[1] === -2) {
-            curBoard[toMove[0]][parseInt(toMove[1])-1] = ['♜', whoseTurn];
-            curBoard[toMove[0]][0] = [''];
-            castle[whoseTurn + 'left'] = false;
-        }
-        //normal move that then prevents castling
         else {
-            castle[whoseTurn + 'left'] = false;
-            castle[whoseTurn + 'right'] = false;
+            if (piece === '♚') {
+                curBoard[i][j] = [piece, whoseTurn];
+                //castle right
+                if (j - toMove[1] === 2) {
+                    curBoard[toMove[0]][parseInt(toMove[1])+1] = ['♜', whoseTurn];
+                    curBoard[toMove[0]][7] = [''];
+                    castle[whoseTurn + 'right'] = false;
+                }
+                //castle left
+                else if (j - toMove[1] === -2) {
+                    curBoard[toMove[0]][parseInt(toMove[1])-1] = ['♜', whoseTurn];
+                    curBoard[toMove[0]][0] = [''];
+                    castle[whoseTurn + 'left'] = false;
+                }
+                //normal move that then prevents castling
+                else {
+                    castle[whoseTurn + 'left'] = false;
+                    castle[whoseTurn + 'right'] = false;
+                }
+                lastMove = ['♚', [old_i, old_j], [i, j]];
+                document.getElementById('square-' + old_i + old_j).classList.remove('square-red');
+            }
+            if (piece === '♜') {
+                //prevent castling with the rook that is about to move
+                if (old_j === '0') castle[whoseTurn + 'left'] = false;
+                if (old_j === '7') castle[whoseTurn + 'right'] = false;
+            }
+            curBoard[i][j] = [piece, whoseTurn];
+            lastMove = [piece, [old_i, old_j], [i, j]];
+            resolve(false);
         }
-        lastMove = ['♚', [old_i, old_j], [i, j]];
-        document.getElementById('square-' + old_i + old_j).classList.remove('square-red');
-    }
-    else {
-        if (piece === '♜') {
-            //prevent castling with the rook that is about to move
-            if (old_j === '0') castle[whoseTurn + 'left'] = false;
-            if (old_j === '7') castle[whoseTurn + 'right'] = false;
-        }
-        curBoard[i][j] = [piece, whoseTurn];
-        lastMove = [piece, [old_i, old_j], [i, j]];
-    }
-    
-    let [kingI, kingJ] = findKing(whoseTurn);
-    document.getElementById('square-' + String(kingI) + String(kingJ)).classList.remove('square-red');
-    kingCheck = false;
-    //remove the piece from its original square
-    curBoard[toMove[0]][toMove[1]] = [''];
-    toMove = [];
+        
+        let [kingI, kingJ] = findKing(whoseTurn);
+        document.getElementById('square-' + String(kingI) + String(kingJ)).classList.remove('square-red');
+        kingCheck = false;
+        //remove the piece from its original square
+        curBoard[toMove[0]][toMove[1]] = [''];
+        toMove = [];
+    });
 }
 
 document.addEventListener('click', function(clicked) {
@@ -220,32 +238,33 @@ document.addEventListener('click', function(clicked) {
             divSquareMovedPiece = document.getElementById("square-" + String(toMove[0]) + String(toMove[1]));
             divSquareMovedPiece.classList.remove("pointer");
             
-            makeMove(i,j);
-            refreshBoard();
-            
-            whoseTurn = nextPlayer(whoseTurn);
-            
-            let [mate, kingPos] = mateCheck();
-            if (mate) {
-                kingCheck = true;
-                //change the color of the king's square to red
-                mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
-                mateKingSquare.classList.add('square-red');
-            } else {
-                kingCheck = false;
-            }
+            makeMove(i,j).then((resPromise) => {
+                if (!resPromise || (resPromise && promotionDone)) {
+                    refreshBoard();
+                    whoseTurn = nextPlayer(whoseTurn);
+                
+                    let [mate, kingPos] = mateCheck();
+                    if (mate) {
+                        kingCheck = true;
+                        //change the color of the king's square to red
+                        mateKingSquare = document.getElementById("square-" + String(kingPos[0]) + String(kingPos[1]));
+                        mateKingSquare.classList.add('square-red');
+                    } else {
+                        kingCheck = false;
+                    }
 
-            let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
-            dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
-            dicMovesCheck = filterPinnedMoves(dicMovesCheck);
-            let gameOver = checkCheckMate(dicMovesCheck, kingPos);
+                    let [dicMovesCheck, disallowKingSquareCheck] = possibleMoves();
+                    dicMovesCheck = addPossibleMovesKing(dicMovesCheck, disallowKingSquareCheck);
+                    dicMovesCheck = filterPinnedMoves(dicMovesCheck);
+                    let gameOver = checkCheckMate(dicMovesCheck, kingPos);
 
-            if (mode === "friend" && !gameOver) flipBoard();
-            if (mode === "zenbot" && !gameOver) {
-                let dicBotPossibleMoves = dicMovesCheck;
-                playZenBotMove(dicBotPossibleMoves);
-            }
-
+                    if (mode === "friend" && !gameOver) flipBoard();
+                    if (mode === "zenbot" && !gameOver) {
+                        let dicBotPossibleMoves = dicMovesCheck;
+                        playZenBotMove(dicBotPossibleMoves);
+                    }
+                }
+            });
         }
         else {      
             //fixed: Allow any piece to move if it has legal moves (filterPinnedMoves handles check restrictions)
