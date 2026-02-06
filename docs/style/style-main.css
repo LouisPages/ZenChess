@@ -182,19 +182,15 @@ span {
     display: grid;
     align-items: center;
     justify-items: center;
-    grid-template-rows: 40px repeat(4, 80px);
+    grid-template-rows: repeat(4, 80px) 40px;
     grid-template-columns: repeat(1, 80px);
     position: absolute;
-    top: -40px;
+    top: -320px;
 }
 
-.w-cancel-promotion {
+.cancel-promotion {
     font-size: 30px;
     padding-bottom: 10px;
-}
-.b-cancel-promotion {
-    font-size: 30px;
-    padding-top: 10px;
 }
 
 /*-------------*/

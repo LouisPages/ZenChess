@@ -134,7 +134,7 @@ function makeMove(i,j) {
                 divProm = document.getElementById('b-pawn-promotion');
                 divProm.style.display = "flex";
                 divPromChoices = document.getElementById('b-promotion-choices');
-                divPromChoices.style.left = String(80*j-320) + "px";
+                divPromChoices.style.left = String(80*(7-j)-320) + "px";
                 document.addEventListener('click', function holdPromotion(clicked) {
                     if (clicked.target.id.slice(0,9) === 'promotion') {
                         promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
