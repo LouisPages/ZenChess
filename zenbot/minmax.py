@@ -2,7 +2,7 @@ import chess
 import enum
 from .botclass import Bot
 
-max_depth_to_explore = 3
+max_depth_to_explore = 2
 
 class GameResult(enum.Enum):
     loss = 1
@@ -49,9 +49,9 @@ def best_result(curboard, depth=0, max_depth=max_depth_to_explore):
     
     if depth >= max_depth:
         eval = evaluate_board(curboard)
-        if eval >= 3:
+        if eval >= 1:
             return GameResult.win
-        elif eval <= -3:
+        elif eval <= -1:
             return GameResult.loss
         else:
             return GameResult.draw

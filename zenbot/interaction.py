@@ -82,13 +82,13 @@ def play_random(curboard, whoseturn, castle_available, lastmove):
     move = str(bot.playmove(converted_curboard))
 
     movetosend = [[8 - int(move[1]), dicPos[move[0]]], [8 - int(move[3]), dicPos[move[2]]]]
-    print(movetosend)
     return movetosend
 
 
-def play_minmax(curboard, mode, whoseturn, castle_available):
+def play_minmax(curboard, whoseturn, castle_available, lastmove):
+    converted_curboard = convert_board(curboard, whoseturn, castle_available, lastmove)
     bot = MinmaxBot()
-    move = bot.playmove(board)
-    
-    movetosend = [[move[1], dicPos[move[0]]],[move[3], dicPos[move[2]]]]
+    move = str(bot.playmove(converted_curboard))
+
+    movetosend = [[8 - int(move[1]), dicPos[move[0]]], [8 - int(move[3]), dicPos[move[2]]]]
     return movetosend

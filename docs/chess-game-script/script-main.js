@@ -33,6 +33,7 @@ let kingCheck = false;
 let promotionDone = false;
 let mode = '';
 let botColor = ''; //used in stack-communication.js
+let zenBotMode = 'minmax';
 
 //create the board with empty cases
 function initBoard() {
@@ -260,8 +261,7 @@ document.addEventListener('click', function(clicked) {
 
                     if (mode === "friend" && !gameOver) flipBoard();
                     if (mode === "zenbot" && !gameOver) {
-                        let dicBotPossibleMoves = dicMovesCheck;
-                        playZenBotMove(dicBotPossibleMoves);
+                        playZenBotMove(zenBotMode);
                     }
                 }
             });

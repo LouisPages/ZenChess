@@ -28,8 +28,9 @@ def bot_move():
         if curboard:
             if mode == "random":
                 chosen_move = play_random(curboard, whoseturn, castle_available, lastmove)
-                print(chosen_move)
-                return jsonify({
+            if mode == "minmax":
+                chosen_move = play_minmax(curboard, whoseturn, castle_available, lastmove)
+            return jsonify({
                     'success': True,
                     'move': chosen_move 
                 })
