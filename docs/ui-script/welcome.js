@@ -32,8 +32,7 @@ document.addEventListener('click', function(clicked) {
         if (clicked.target.id.slice(10,15) === "black") {
             botColor = 'w';
             flipBoard();
-            let [dicMovesCheck, _] = possibleMoves();
-            playZenBotMove(dicMovesCheck);
+            playZenBotMove(zenBotMode);
         }
         else botColor = 'b'
     }

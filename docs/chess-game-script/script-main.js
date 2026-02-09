@@ -342,11 +342,19 @@ function flipBoard() {
         document.querySelectorAll('.square').forEach(square => {
             square.style.transform = 'rotate(0deg)';
         });
+        document.getElementById('square-00').style.transform = 'rotate(0deg)'
+        document.getElementById('square-07').style.transform = 'rotate(0deg)'
+        document.getElementById('square-70').style.transform = 'rotate(0deg)'
+        document.getElementById('square-77').style.transform = 'rotate(0deg)'
     } else {
         board.style.transform = 'rotate(180deg)';
         document.querySelectorAll('.square').forEach(square => {
             square.style.transform = 'rotate(180deg)';
         });
+        document.getElementById('square-00').style.transform = 'rotate(180deg)'
+        document.getElementById('square-07').style.transform = 'rotate(180deg)'
+        document.getElementById('square-70').style.transform = 'rotate(180deg)'
+        document.getElementById('square-77').style.transform = 'rotate(180deg)'
     }
 }
 
