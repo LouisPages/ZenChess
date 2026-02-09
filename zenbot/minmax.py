@@ -1,14 +1,8 @@
 import chess
 import enum
+from .botclass import Bot
 
 max_depth_to_explore = 3
-
-class Bot:
-    def __init__(self):
-        pass
-
-    def playmove(self, curboard):
-        raise NotImplementedError
 
 class GameResult(enum.Enum):
     loss = 1

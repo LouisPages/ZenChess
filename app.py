@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory, request, jsonify
 import os
-from zenbot import get_random_move
+from zenbot import *
 
 app = Flask(__name__, static_folder='docs')
 
@@ -19,13 +19,20 @@ def serve_static(path):
 def bot_move():
     try:
         data = request.get_json()
-        legal_moves = data.get('legalMoves')
-        if legal_moves and len(legal_moves) > 0:
-            chosen_move = get_random_move(legal_moves)
-            return jsonify({
-                'success': True,
-                'move': chosen_move
-            })
+        curboard = data.get('curBoard')
+        mode = data.get('mode')
+        whoseturn = data.get('whoseTurn')
+        castle_available = data.get('castleAvailable')
+        lastmove = data.get('lastmove')
+
+        if curboard:
+            if mode == "random":
+                chosen_move = play_random(curboard, whoseturn, castle_available, lastmove)
+                print(chosen_move)
+                return jsonify({
+                    'success': True,
+                    'move': chosen_move 
+                })
         else:
             return jsonify({
                 'success': False,

@@ -1,8 +1,6 @@
 //function designed to send moves that the bot can play so that it can choose it randomly
-//todo after: only send curBoard and use python-chess module
 async function playZenBotMove(dicBotPossibleMoves) {
-    let movesToSend = getMovesToSend(dicBotPossibleMoves);
-    let chosenMove = await getZenBotMove(movesToSend);
+    let chosenMove = await getZenBotMove('random');
     
     toMove = [chosenMove[0][0], chosenMove[0][1]]
     makeMove(chosenMove[1][0], chosenMove[1][1]);
@@ -26,23 +24,9 @@ async function playZenBotMove(dicBotPossibleMoves) {
     let gameOver = checkCheckMate(dicMovesCheck, kingPos);
 }
 
-//prepare the data to send
-function getMovesToSend(dicBotPossibleMoves) {
-    let movesToSend = [];
-    for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-            if (curBoard[i][j][1] === botColor) {
-                dicBotPossibleMoves[[i,j]].forEach(element => {
-                    movesToSend.push([[i,j],element]);
-                });
-            }
-        }
-    }
-    return movesToSend;
-}
 
-//send the data and receive ZenBot's move 
-async function getZenBotMove(movesToSend) {
+//send the data and receive ZenBot's move
+async function getZenBotMove(mode) {
     try {
         const response = await fetch('/zenbot/get-bot-move', {
             method: 'POST',
@@ -50,7 +34,11 @@ async function getZenBotMove(movesToSend) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                legalMoves: movesToSend
+                curBoard : curBoard,
+                mode : mode,
+                whoseTurn : whoseTurn,
+                castleAvailable: castle,
+                lastMove: lastMove
             })
         })
 
