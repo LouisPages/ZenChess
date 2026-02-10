@@ -46,17 +46,45 @@ def do_prepare_data():
     nsamples = len(positions)
     X = np.zeros((nsamples, 17, 8, 8))
     Y = np.zeros(nsamples)
+
+    engine_path = "C:/Users/loupa/Downloads/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+    engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+
+    failed_positions = []
     
-    for i, fen in enumerate(positions, start=0):
-        board = chess.Board(fen)
-
-        X[i] = board_to_tensor(board)
-
-        engine = chess.engine.SimpleEngine.popen_uci("C:/Users/loupa/Downloads/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe")
-        info = engine.analyse(board, chess.engine.Limit(depth=20))
-        engine.quit()
-        Y[i] = info['score'].relative.score()
-        print("\r{} / 100 converted data".format(i+1), end='')
+    try:
+        for i, fen in enumerate(positions):
+            board = chess.Board(fen)
+            X[i] = board_to_tensor(board)
+            
+            try:
+                info = engine.analyse(board, chess.engine.Limit(depth=20))
+                score = info['score'].relative.score()
+                Y[i] = score if score is not None else 0
+                
+            except Exception as e:
+                print(f"\nError on position {i+1}: {fen}")
+                print(f"Error type: {type(e).__name__}")
+                failed_positions.append(i)
+                
+                try:
+                    engine.quit()
+                except:
+                    pass
+                
+                engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+                Y[i] = 0
+            
+            print(f"\r{i+1} / {nsamples} converted data", end='')
+    
+    finally:
+        try:
+            engine.quit()
+        except:
+            pass
+    
+    if failed_positions:
+        print(f"\n\nFailed positions: {failed_positions}")
 
     np.save('zenbot/eval_nn/X_data.npy', X)
     np.save('zenbot/eval_nn/Y_data.npy', Y)

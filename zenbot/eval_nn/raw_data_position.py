@@ -98,13 +98,13 @@ positions = [
     
     # Pawn endgames
     "8/5pk1/6p1/5p2/5P2/6PK/7P/8 w - - 0 45",
-    "8/8/4kpp1/5p2/4KP2/6P1/7P/8 b - - 0 48",
     "8/5pk1/8/4Pp2/5P2/6K1/7P/8 w - f6 0 42",
     "8/8/5kp1/4p1p1/4P1P1/5PK1/8/8 b - - 0 50",
     "8/6k1/6p1/5p2/5P2/6PK/8/8 w - - 2 46",
     "8/8/8/3k1p2/5P2/3K4/8/8 b - - 4 60",
     "8/8/4k3/3p1p2/3P1P2/4K3/8/8 w - - 0 55",
     "8/6p1/5k2/5p2/5P2/6PK/8/8 b - - 0 52",
+    "8/8/3k4/2p1p3/2P1P3/3K4/8/8 w - - 0 52",
     
     # Queen endgames
     "6k1/8/6K1/8/8/8/5q2/7Q w - - 8 70",
@@ -121,7 +121,7 @@ positions = [
     
     # Opposite-colored bishops
     "6k1/4bpp1/5p1p/8/8/5BPK/6PP/8 w - - 0 45",
-    "8/5pk1/4b1p1/6P1/5B2/7K/6PP/8 b - - 0 50",
+    "8/5pk1/6p1/4b1P1/5B2/7K/6PP/8 b - - 0 48",
     
     # Unbalanced material
     "r5k1/5ppp/8/8/8/5QPK/5R1P/8 w - - 0 38",
