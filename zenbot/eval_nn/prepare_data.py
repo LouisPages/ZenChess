@@ -2,7 +2,7 @@ import numpy as np
 import chess
 import chess.engine
 import time
-from raw_data_position import positions
+# from raw_data_position import positions
 
 dic_piece_ind = {'P': 0, 'N': 1, 'B': 2, 'R': 3, 'Q': 4, 'K': 5}
 
@@ -58,7 +58,7 @@ def do_prepare_data():
             X[i] = board_to_tensor(board)
             
             try:
-                info = engine.analyse(board, chess.engine.Limit(depth=20))
+                info = engine.analyse(board, chess.engine.Limit(depth=17))
                 score = info['score'].relative.score()
                 Y[i] = score if score is not None else 0
                 

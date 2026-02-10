@@ -33,7 +33,7 @@ let kingCheck = false;
 let promotionDone = false;
 let mode = '';
 let zenBotColor = ''; //initialized  in welcome.js
-let zenBotMode = 'minmax';
+let zenBotMode = 'eval';
 
 //create the board with empty cases
 function initBoard() {
