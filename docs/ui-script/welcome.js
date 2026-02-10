@@ -30,10 +30,10 @@ document.addEventListener('click', function(clicked) {
             message.style.display = "none";
         }, 500);
         if (clicked.target.id.slice(10,15) === "black") {
-            botColor = 'w';
+            zenBotColor = 'w';
             flipBoard();
             playZenBotMove(zenBotMode);
         }
-        else botColor = 'b'
+        else zenBotColor = 'b';
     }
 });

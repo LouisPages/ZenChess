@@ -32,7 +32,7 @@ let lastMove = null;
 let kingCheck = false;
 let promotionDone = false;
 let mode = '';
-let botColor = ''; //used in stack-communication.js
+let zenBotColor = ''; //initialized  in welcome.js
 let zenBotMode = 'minmax';
 
 //create the board with empty cases
@@ -268,7 +268,7 @@ document.addEventListener('click', function(clicked) {
         }
         else {      
             //fixed: Allow any piece to move if it has legal moves (filterPinnedMoves handles check restrictions)
-            if (clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && dicMoves[[i,j]].length != 0) {
+            if ((mode === 'friend' || (mode === 'zenbot' && whoseTurn != zenBotColor)) && clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && dicMoves[[i,j]].length != 0) {
                 document.getElementById('svg-background').classList.add('clip-board');
                 
                 //make legal moves appear if what has been clicked is a piece belonging to the player whose turn it is to play
@@ -342,19 +342,11 @@ function flipBoard() {
         document.querySelectorAll('.square').forEach(square => {
             square.style.transform = 'rotate(0deg)';
         });
-        document.getElementById('square-00').style.transform = 'rotate(0deg)'
-        document.getElementById('square-07').style.transform = 'rotate(0deg)'
-        document.getElementById('square-70').style.transform = 'rotate(0deg)'
-        document.getElementById('square-77').style.transform = 'rotate(0deg)'
     } else {
         board.style.transform = 'rotate(180deg)';
         document.querySelectorAll('.square').forEach(square => {
             square.style.transform = 'rotate(180deg)';
         });
-        document.getElementById('square-00').style.transform = 'rotate(180deg)'
-        document.getElementById('square-07').style.transform = 'rotate(180deg)'
-        document.getElementById('square-70').style.transform = 'rotate(180deg)'
-        document.getElementById('square-77').style.transform = 'rotate(180deg)'
     }
 }
 
