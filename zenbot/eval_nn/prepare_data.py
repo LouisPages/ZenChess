@@ -1,7 +1,6 @@
 import numpy as np
 import chess
 import chess.engine
-import time
 # from raw_data_position import positions
 
 dic_piece_ind = {'P': 0, 'N': 1, 'B': 2, 'R': 3, 'Q': 4, 'K': 5}
@@ -33,11 +32,11 @@ def board_to_tensor(board):
             else:
                 tensor[6 + plane_ind][rank][file] = 1.0
 
-    tensor[12] = board.turn
-    tensor[13] = board.has_kingside_castling_rights(chess.WHITE)
-    tensor[14] = board.has_kingside_castling_rights(chess.WHITE)
-    tensor[15] = board.has_kingside_castling_rights(chess.BLACK)
-    tensor[16] = board.has_kingside_castling_rights(chess.BLACK)
+    tensor[12, :, :] = board.turn
+    tensor[13, :, :] = board.has_kingside_castling_rights(chess.WHITE)
+    tensor[14, :, :] = board.has_kingside_castling_rights(chess.WHITE)
+    tensor[15, :, :] = board.has_kingside_castling_rights(chess.BLACK)
+    tensor[16, :, :] = board.has_kingside_castling_rights(chess.BLACK)
 
     return tensor
 

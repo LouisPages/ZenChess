@@ -2,6 +2,7 @@ import chess
 import chess.engine
 import random
 from .botclass import Bot
+from .eval_zenbot import get_eval
 
 max_depth_to_explore = 3
 
@@ -25,15 +26,17 @@ def order_moves(board):
     return sorted(legal_moves, key=move_priority, reverse=True)
 
 def evaluate_board(board):
-    score = 0
-    for square in chess.SQUARES:
-        piece = board.piece_at(square)
-        if piece is not None:
-            if piece.color == board.turn:
-                score += dicScore[str(piece).upper()]
-            else:
-                score -= dicScore[str(piece).upper()]
-    return score
+    return get_eval(board)
+
+    # score = 0
+    # for square in chess.SQUARES:
+    #     piece = board.piece_at(square)
+    #     if piece is not None:
+    #         if piece.color == board.turn:
+    #             score += dicScore[str(piece).upper()]
+    #         else:
+    #             score -= dicScore[str(piece).upper()]
+    # return score
 
     # code to test the code with stockfish's evaluation
     # engine = chess.engine.SimpleEngine.popen_uci("C:/Users/loupa/Downloads/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe")

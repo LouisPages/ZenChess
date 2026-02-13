@@ -14,11 +14,11 @@ def get_eval(curboard):
     curboard_batch = np.expand_dims(curboard_tensor, axis=0)
     shape_eval = model.predict(curboard_batch, verbose=0)
     eval = (shape_eval[0][0] * Y_std) + Y_mean
-    print(eval)
     return eval
 
 class EvalBot(Bot):
     def playmove(self, curboard):
+        print(f"eval according to zenBot: {get_eval(curboard)}")
         if curboard.turn:
             max = -99999
             best_move_white = None
@@ -45,4 +45,3 @@ class EvalBot(Bot):
             print(min)
             print(best_move_black)
             return best_move_black
-
