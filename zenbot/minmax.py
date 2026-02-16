@@ -2,11 +2,10 @@ import chess
 import chess.engine
 import random
 from .botclass import Bot
-# from .eval_zenbot import get_eval
 
 #opening book
 import chess.polyglot
-book = chess.polyglot.open_reader("zenbot/opening.bin")
+book = chess.polyglot.open_reader("zenbot/opening_book/komodo.bin")
 
 
 max_depth_to_explore = 4
@@ -267,6 +266,8 @@ def best_result(curboard, alpha, beta, depth=1, max_depth=max_depth_to_explore):
 class MinmaxBot(Bot):
     def playmove(self, curboard):
         #first we check for book responses
+        # book_tmp = list(book.find_all(curboard))
+        # book_responses = list(filter(lambda x: x.weight >  0.5*book_tmp[0].weight,book_tmp))
         book_responses = list(book.find_all(curboard))
         if len(book_responses) > 0:
             entry = random.choice(book_responses)

@@ -3,6 +3,7 @@
 from .minmax import *
 from .randombot import *
 from .eval_zenbot import *
+from .sunfish import * 
 
 dicPos = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
 
@@ -97,6 +98,14 @@ def play_minmax(curboard, whoseturn, castle_available, lastmove):
 def play_eval(curboard, whoseturn, castle_available, lastmove):
     converted_curboard = convert_board(curboard, whoseturn, castle_available, lastmove)
     bot = EvalBot()
+    move = str(bot.playmove(converted_curboard))
+
+    movetosend = [[8 - int(move[1]), dicPos[move[0]]], [8 - int(move[3]), dicPos[move[2]]]]
+    return movetosend
+
+def play_sunfish(curboard, whoseturn, castle_available, lastmove):
+    converted_curboard = convert_board(curboard, whoseturn, castle_available, lastmove)
+    bot = SunfishBot()
     move = str(bot.playmove(converted_curboard))
 
     movetosend = [[8 - int(move[1]), dicPos[move[0]]], [8 - int(move[3]), dicPos[move[2]]]]

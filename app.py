@@ -32,6 +32,8 @@ def bot_move():
                 chosen_move = play_minmax(curboard, whoseturn, castle_available, lastmove)
             if mode == "eval":
                 chosen_move = play_eval(curboard, whoseturn, castle_available, lastmove)
+            if mode == "sunfish":
+                chosen_move = play_sunfish(curboard, whoseturn, castle_available, lastmove)
             return jsonify({
                     'success': True,
                     'move': chosen_move 
