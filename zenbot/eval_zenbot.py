@@ -1,3 +1,7 @@
+import os
+
+os.environ.setdefault("KERAS_BACKEND", "torch")
+
 import chess
 import sys
 import numpy as np

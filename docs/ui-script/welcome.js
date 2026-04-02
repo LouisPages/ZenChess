@@ -13,6 +13,9 @@ document.addEventListener('click', function(clicked) {
             setTimeout(() => {
                 message.innerHTML = "";
                 message.style.display = "none";
+                if (typeof requestSageOpeningReflection === "function") {
+                    requestSageOpeningReflection();
+                }
             }, 500);
         }
         else {
@@ -25,6 +28,9 @@ document.addEventListener('click', function(clicked) {
     }
     if (clicked.target.id.slice(0,10) === "play-with-" && mode === "zenbot") {
         message.style.opacity = "0";
+        if (typeof requestSageOpeningReflection === "function") {
+            requestSageOpeningReflection();
+        }
         setTimeout(() => {
             message.innerHTML = "";
             message.style.display = "none";

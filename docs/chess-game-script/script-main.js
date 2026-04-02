@@ -100,7 +100,7 @@ function makeMove(i,j) {
                         promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
                         curBoard[i][j] = [promotionPiece, 'w'];
                         divProm.style.display = "none";
-                        lastMove = ['♟', [old_i, old_j], [i,j]];
+                        lastMove = [promotionPiece, [old_i, old_j], [i,j]];
                         refreshBoard();
                         //check if the promotion makes a check
                         let [mate, kingPos] = mateCheck();
@@ -141,7 +141,7 @@ function makeMove(i,j) {
                         promotionPiece = dicPromotion[clicked.target.id.slice(10,14)];
                         curBoard[i][j] = [promotionPiece, 'b'];
                         divProm.style.display = "none";
-                        lastMove = ['♟', [old_i, old_j], [i,j]];
+                        lastMove = [promotionPiece, [old_i, old_j], [i,j]];
                         refreshBoard();
                         //check if the promotion makes a check
                         let [mate, kingPos] = mateCheck();
@@ -159,7 +159,7 @@ function makeMove(i,j) {
                         promotionDone = true;
                         resolve(true);
                     }
-                    if (clicked.target.id === "b-btn-cancel-promotion" || clicked.target.id(0,9) != 'promotion') {
+                    if (clicked.target.id === "b-btn-cancel-promotion" || clicked.target.id.slice(0,9) != 'promotion') {
                         curBoard[old_i][old_j] = ['♟', 'b', false];
                         whoseTurn = 'b';
                         divProm.style.display = "none";
@@ -241,6 +241,7 @@ document.addEventListener('click', function(clicked) {
             
             makeMove(i,j).then((resPromise) => {
                 if (!resPromise || (resPromise && promotionDone)) {
+                    const playerWhoMoved = whoseTurn;
                     refreshBoard();
                     whoseTurn = nextPlayer(whoseTurn);
                 
@@ -259,9 +260,27 @@ document.addEventListener('click', function(clicked) {
                     dicMovesCheck = filterPinnedMoves(dicMovesCheck);
                     let gameOver = checkCheckMate(dicMovesCheck, kingPos);
 
-                    if (mode === "friend" && !gameOver) flipBoard();
-                    if (mode === "zenbot" && !gameOver) {
-                        playZenBotMove(zenBotMode);
+                    if (mode === "friend") {
+                        if (!gameOver) flipBoard();
+                        if (typeof requestSageReflection === 'function') {
+                            requestSageReflection(
+                                playerWhoMoved,
+                                JSON.parse(JSON.stringify(curBoard)),
+                                JSON.parse(JSON.stringify(lastMove))
+                            );
+                        }
+                    }
+                    if (mode === "zenbot") {
+                        if (typeof requestSageReflection === 'function') {
+                            requestSageReflection(
+                                playerWhoMoved,
+                                JSON.parse(JSON.stringify(curBoard)),
+                                JSON.parse(JSON.stringify(lastMove))
+                            );
+                        }
+                        if (!gameOver) {
+                            playZenBotMove(zenBotMode);
+                        }
                     }
                 }
             });

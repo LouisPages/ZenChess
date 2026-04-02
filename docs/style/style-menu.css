@@ -65,6 +65,164 @@
     transform: scale(0.95);
 }
 
+#icon-sage-toggle {
+    position: relative;
+    flex-shrink: 0;
+}
+
+#icon-sage-toggle svg {
+    width: 24px;
+    height: 24px;
+    color: #dbb17d;
+    transition: color 0.3s ease;
+}
+
+#icon-sage-toggle .icon-sage-closed {
+    display: none;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+}
+
+#icon-sage-toggle.sage-toggle-collapsed .icon-sage-open {
+    display: none;
+}
+
+#icon-sage-toggle.sage-toggle-collapsed .icon-sage-closed {
+    display: block;
+}
+
+/*----------*/
+/* sage panel (LLM messages) */
+/*----------*/
+
+#sage-panel {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 0;
+    bottom: auto;
+    left: auto;
+    width: min(288px, calc(50vw - 200px));
+    max-height: min(300px, 42vh);
+    z-index: 10;
+    background: rgba(26, 20, 16, 0.42);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(219, 177, 125, 0.22);
+    border-radius: 14px;
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        max-height 0.45s ease,
+        margin 0.35s ease,
+        border-color 0.3s ease;
+}
+
+#sage-panel.sage-collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+    transform: translateX(-16px);
+    border-color: transparent;
+}
+
+.sage-panel-inner {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}
+
+.sage-panel-label {
+    font-family: "Baskervville SC", serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.sage-messages {
+    max-height: min(240px, 36vh);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(219, 177, 125, 0.35) transparent;
+}
+
+.sage-messages::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sage-messages::-webkit-scrollbar-thumb {
+    background: rgba(219, 177, 125, 0.3);
+    border-radius: 4px;
+}
+
+.sage-message {
+    font-family: "Baskervville", serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(245, 232, 210, 0.92);
+    margin: 0;
+}
+
+/* Entrée des messages du sage : lent, léger, sans à-coup (esprit zen) */
+.sage-message-appear {
+    opacity: 0;
+    transform: translateY(5px);
+    transition:
+        opacity 1.15s ease-out,
+        transform 1.45s cubic-bezier(0.33, 0.02, 0.18, 1);
+}
+
+.sage-message-appear.sage-message-appear-ready {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sage-message-appear {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+.sage-message cite {
+    font-style: italic;
+    color: #dbb17d;
+}
+
+.sage-message + .sage-message {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(219, 177, 125, 0.1);
+}
+
+.sage-loading {
+    font-style: italic;
+    color: rgba(219, 177, 125, 0.65);
+}
+
+.sage-awaiting-mode {
+    font-style: italic;
+    color: rgba(219, 177, 125, 0.55);
+}
+
+.sage-message-error {
+    color: rgba(255, 200, 180, 0.85);
+    font-size: 13px;
+}
+
 /*----------*/
 /*info panel*/
 /*----------*/
@@ -311,6 +469,114 @@
 
 
 /*---------------*/
+/* moon hint (first visit) */
+/*---------------*/
+
+.moon-hint-bubble {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    right: auto;
+    top: calc(100% + 14px);
+    transform: translateX(-50%) translateY(10px);
+    opacity: 0;
+    pointer-events: none;
+    /* Wider than .moon (120px); avoid shrink-to-fit stacking one word per line */
+    width: max-content;
+    max-width: min(240px, calc(100vw - 48px));
+    white-space: nowrap;
+    padding: 11px 17px 12px;
+    font-family: "Baskervville", serif;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: rgba(252, 248, 240, 0.95);
+    text-align: center;
+    line-height: 1.4;
+    background: rgba(18, 24, 45, 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(219, 177, 125, 0.3);
+    border-radius: 16px;
+    box-shadow:
+        0 12px 42px rgba(0, 0, 0, 0.48),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
+    transition:
+        opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.moon-hint-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 0;
+    height: 0;
+    margin-left: -9px;
+    margin-bottom: -1px;
+    border-style: solid;
+    border-width: 0 9px 10px 9px;
+    border-color: transparent transparent rgba(219, 177, 125, 0.32) transparent;
+}
+
+.moon-hint-bubble--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    animation: moonHintGlow 4.2s ease-in-out infinite;
+}
+
+.moon-hint-bubble--dismissed {
+    opacity: 0 !important;
+    transform: translateX(-50%) translateY(8px) scale(0.96) !important;
+    animation: none;
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+}
+
+.moon-hint-text {
+    font-style: italic;
+}
+
+.moon-hint-emoji {
+    font-style: normal;
+    font-size: 1.05em;
+    letter-spacing: 0.02em;
+}
+
+@keyframes moonHintGlow {
+    0%,
+    100% {
+        box-shadow:
+            0 12px 42px rgba(0, 0, 0, 0.48),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 0 18px rgba(219, 177, 125, 0.06);
+    }
+    50% {
+        box-shadow:
+            0 14px 48px rgba(0, 0, 0, 0.52),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 0 32px rgba(219, 177, 125, 0.12);
+    }
+}
+
+@media (max-width: 520px) {
+    .moon-hint-bubble {
+        top: calc(100% + 10px);
+        max-width: min(210px, calc(100vw - 32px));
+        padding: 10px 14px 11px;
+        font-size: 14px;
+    }
+
+    .moon-hint-bubble--dismissed {
+        transform: translateX(-50%) translateY(6px) scale(0.95) !important;
+    }
+}
+
+/*---------------*/
 /*menu responsive*/
 /*---------------*/
 
@@ -340,6 +606,20 @@
     .floating-icon svg {
         width: 20px;
         height: 20px;
+    }
+    
+    #icon-sage-toggle svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    #sage-panel {
+        width: min(260px, calc(100vw - 100px));
+        max-height: min(220px, 32vh);
+    }
+    
+    .sage-message {
+        font-size: 13px;
     }
     
     #info-panel,
