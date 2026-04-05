@@ -224,6 +224,95 @@
 }
 
 /*----------*/
+/* sage LLM prompt debug (temporaire, viewport droit) */
+/*----------*/
+
+#sage-llm-prompt-panel {
+    position: fixed;
+    top: 72px;
+    right: 16px;
+    bottom: 24px;
+    width: min(380px, calc(42vw - 24px));
+    max-width: calc(100vw - 32px);
+    z-index: 24;
+    background: rgba(12, 16, 32, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(120, 160, 255, 0.22);
+    border-radius: 14px;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+}
+
+.sage-llm-prompt-inner {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    flex: 1;
+}
+
+.sage-llm-prompt-label {
+    font-family: "Baskervville SC", serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(200, 210, 255, 0.9);
+    margin: 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(120, 160, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.sage-llm-prompt-badge {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255, 180, 100, 0.2);
+    color: rgba(255, 210, 170, 0.95);
+    border: 1px solid rgba(255, 180, 100, 0.35);
+}
+
+.sage-llm-prompt-body {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 10px 10px 12px;
+    overflow: auto;
+    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    color: rgba(220, 228, 255, 0.88);
+    white-space: pre-wrap;
+    word-break: break-word;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 160, 255, 0.35) transparent;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(120, 160, 255, 0.12);
+}
+
+.sage-llm-prompt-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sage-llm-prompt-body::-webkit-scrollbar-thumb {
+    background: rgba(120, 160, 255, 0.28);
+    border-radius: 4px;
+}
+
+/*----------*/
 /*info panel*/
 /*----------*/
 
@@ -620,6 +709,15 @@
     
     .sage-message {
         font-size: 13px;
+    }
+
+    #sage-llm-prompt-panel {
+        top: auto;
+        bottom: 10px;
+        right: 8px;
+        left: 8px;
+        width: auto;
+        max-height: min(32vh, 280px);
     }
     
     #info-panel,

@@ -149,3 +149,20 @@ sageToggle.addEventListener('keydown', function(e) {
         setSagePanelVisible(!sageMessagesVisible);
     }
 });
+
+// Panneau debug prompt LLM : uniquement si SHOW_SAGE_LLM_PROMPT_PANEL (sage-llm-config.js)
+if (typeof SHOW_SAGE_LLM_PROMPT_PANEL !== 'undefined' && SHOW_SAGE_LLM_PROMPT_PANEL === true) {
+    const sageLlmPromptPanel = document.createElement('aside');
+    sageLlmPromptPanel.id = 'sage-llm-prompt-panel';
+    sageLlmPromptPanel.setAttribute('aria-label', 'Prompt envoyé au LLM (debug)');
+    sageLlmPromptPanel.innerHTML = `
+    <div class="sage-llm-prompt-inner">
+        <p class="sage-llm-prompt-label">
+            Prompt LLM
+            <span class="sage-llm-prompt-badge" title="Rubrique temporaire de développement">temp</span>
+        </p>
+        <pre id="sage-llm-prompt-body" class="sage-llm-prompt-body">—</pre>
+    </div>
+`;
+    document.body.appendChild(sageLlmPromptPanel);
+}

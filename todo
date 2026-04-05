@@ -1,2 +1,0 @@
-!! Ajouter dans le prompt l'évaluation de la position de stockfish, afin que le LLM ait en contexte en qui est en faveur la position
--> adapte le message généré si l'adversaire donne une dame, a un mat en 3 ou une tactique qui peut gagner une pièce

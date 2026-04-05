@@ -1,7 +1,13 @@
 /**
  * Sage / Mistral : ouverture (ami ou ZenBot) et réflexion après chaque coup du joueur
  * (ami ou ZenBot ; le coup du bot ne déclenche rien).
+ *
+ * Panneau / API debug prompts : SHOW_SAGE_LLM_PROMPT_PANEL dans sage-llm-config.js
  */
+function isSageLlmPromptPanelEnabled() {
+    return typeof SHOW_SAGE_LLM_PROMPT_PANEL !== 'undefined' && SHOW_SAGE_LLM_PROMPT_PANEL === true;
+}
+
 function removeSageAwaitingModePlaceholder() {
     const el = document.getElementById('sage-awaiting-mode');
     if (el) {
@@ -42,9 +48,45 @@ function revealSageMessageElement(el) {
     });
 }
 
+function setSageLlmPromptPanelLoading() {
+    const pre = document.getElementById('sage-llm-prompt-body');
+    if (!pre) {
+        return;
+    }
+    pre.textContent =
+        'Requête en cours… Le message utilisateur complet sera affiché dès que le serveur aura répondu.';
+}
+
+function setSageLlmPromptPanelContent(systemText, userText) {
+    const pre = document.getElementById('sage-llm-prompt-body');
+    if (!pre) {
+        return;
+    }
+    const parts = [];
+    if (systemText) {
+        parts.push('── Système ──\n' + String(systemText));
+    }
+    if (userText != null && userText !== '') {
+        parts.push('── Message utilisateur ──\n' + String(userText));
+    }
+    pre.textContent = parts.length ? parts.join('\n\n') : '—';
+}
+
+function setSageLlmPromptPanelError(message) {
+    const pre = document.getElementById('sage-llm-prompt-body');
+    if (!pre) {
+        return;
+    }
+    pre.textContent = '—\n\n(Impossible d’afficher le prompt : ' + String(message || 'erreur') + ')';
+}
+
 function requestSageReflectionFromApi(payload, box) {
     const priorReflections = collectPriorSageReflections(box);
     const body = Object.assign({}, payload, { priorReflections: priorReflections });
+    if (isSageLlmPromptPanelEnabled()) {
+        body.includeLlmPrompt = true;
+        setSageLlmPromptPanelLoading();
+    }
 
     const prevLoad = document.getElementById('sage-loading-msg');
     if (prevLoad) {
@@ -77,12 +119,23 @@ function requestSageReflectionFromApi(payload, box) {
             const p = document.createElement('p');
             p.className = 'sage-message';
 
-            if (result.ok && result.data.success && result.data.message) {
-                p.textContent = result.data.message;
+            const data = result.data || {};
+            if (result.ok && data.success && data.message) {
+                p.textContent = data.message;
+                if (isSageLlmPromptPanelEnabled() && data.llmUserPrompt != null) {
+                    setSageLlmPromptPanelContent(data.llmSystemPrompt, data.llmUserPrompt);
+                }
             } else {
                 p.classList.add('sage-message-error');
-                const err = (result.data && result.data.error) || 'Réponse invalide';
+                const err = data.error || 'Réponse invalide';
                 p.textContent = 'Le silence du sage… (' + err + ')';
+                if (isSageLlmPromptPanelEnabled()) {
+                    if (data.llmUserPrompt != null) {
+                        setSageLlmPromptPanelContent(data.llmSystemPrompt, data.llmUserPrompt);
+                    } else {
+                        setSageLlmPromptPanelError(err);
+                    }
+                }
             }
             box.appendChild(p);
             revealSageMessageElement(p);
@@ -100,10 +153,19 @@ function requestSageReflectionFromApi(payload, box) {
             box.appendChild(p);
             revealSageMessageElement(p);
             box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+            if (isSageLlmPromptPanelEnabled()) {
+                setSageLlmPromptPanelError(err.message || 'réseau');
+            }
         });
 }
 
-function requestSageReflection(playerMoved, boardSnapshot, lastMoveSnapshot) {
+function requestSageReflection(
+    playerMoved,
+    boardSnapshot,
+    lastMoveSnapshot,
+    whoseTurnToMove,
+    castleSnapshot
+) {
     const box = document.getElementById('sage-messages');
     if (!box || (mode !== 'friend' && mode !== 'zenbot')) {
         return;
@@ -111,14 +173,18 @@ function requestSageReflection(playerMoved, boardSnapshot, lastMoveSnapshot) {
     if (mode === 'zenbot' && playerMoved === zenBotColor) {
         return;
     }
-    requestSageReflectionFromApi(
-        {
-            board: boardSnapshot,
-            lastMove: lastMoveSnapshot,
-            playerMoved: playerMoved,
-        },
-        box
-    );
+    const payload = {
+        board: boardSnapshot,
+        lastMove: lastMoveSnapshot,
+        playerMoved: playerMoved,
+    };
+    if (whoseTurnToMove === 'w' || whoseTurnToMove === 'b') {
+        payload.whoseTurn = whoseTurnToMove;
+    }
+    if (castleSnapshot && typeof castleSnapshot === 'object') {
+        payload.castleAvailable = castleSnapshot;
+    }
+    requestSageReflectionFromApi(payload, box);
 }
 
 /** Premier message : plateau initial, aucun coup joué (même consigne système côté serveur). */
@@ -128,13 +194,17 @@ function requestSageOpeningReflection() {
         return;
     }
     removeSageAwaitingModePlaceholder();
-    requestSageReflectionFromApi(
-        {
-            opening: true,
-            board: JSON.parse(JSON.stringify(curBoard)),
-        },
-        box
-    );
+    const openingPayload = {
+        opening: true,
+        board: JSON.parse(JSON.stringify(curBoard)),
+    };
+    if (typeof whoseTurn !== 'undefined' && (whoseTurn === 'w' || whoseTurn === 'b')) {
+        openingPayload.whoseTurn = whoseTurn;
+    }
+    if (typeof castle !== 'undefined' && castle !== null) {
+        openingPayload.castleAvailable = JSON.parse(JSON.stringify(castle));
+    }
+    requestSageReflectionFromApi(openingPayload, box);
 }
 
 (function initSageAwaitingModeReveal() {

@@ -1,10 +1,12 @@
 """Build prompts and call Mistral or Anthropic for the sage reflection feature."""
 import os
 import re
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from anthropic import Anthropic
 from mistralai.client import Mistral
+
+from .sage_stockfish import build_stockfish_digest_for_sage
 
 _DEFAULT_ANTHROPIC_MODEL = "claude-3-5-haiku-20241022"
 
@@ -16,14 +18,19 @@ Avant le premier coup comme après chaque coup joué, tu partages une réflexion
   d'un de ces philosophes (en l'attribuant explicitement)
   DANS LE CAS Où UNE PHRASE EST PRéSENTé COMME UNE CITATION, LA CITATION DOIT ÊTRE EXACTE, N'INVENTE PAS !
 - Relie ce concept à la situation sur l'échiquier de façon métaphorique (potentiel initial ou mouvement selon le contexte)
-- Ne commente jamais le jeu de façon technique
+- Ne commente jamais le jeu de façon technique : pas de notation algébrique, pas de variantes, pas de ton commentateur.
+  Si le message utilisateur contient une « Lecture approfondie » (résumé d'un fort programme sur la position),
+  sers-t'en seulement pour sentir tension, équilibre, bascule possible ou pression — traduis ça en image poétique,
+  sans jamais recracher ces coups ni citer le moteur.
 Format idéal : La citation est inséré avec fluidité et en lien avec le moment de la partie.
 
 IMPORTANT : Je n'attends pas une structure en deux temps (citation puis lien), la citation est fondue dans la réflexion,
 elle arrive naturellement, comme si le philosophe pensait à voix haute plutôt que de faire un cours. Évite à
 tout prix les formules pompeuse comme "comme l'a dit X", "comme disait Y" et autres formules comme ça.
 
-STYLE : Tu es un sage mais tu restes simple. Ne sois pas pompeux avec des choses compliquées. Evite d'utiliser le verbe "lover".
+STYLE : Tu es un sage mais tu restes simple. Ne sois pas pompeux avec des choses compliquées. Evite d'utiliser le verbe "lover"
+ou d'utiliser des expressions répétitives comme "et chaque case/pièce...". Ne cite pas les cases de l'échiquier.
+Cite les pièces de temps en temps, mais pas à chaque réplique.
 
 TRÈS IMPORTANT — mémoire de la partie : le message utilisateur peut inclure, après un séparateur, la liste chronologique
 de tes réflexions déjà prononcées dans cette même partie. Tu dois t'en servir pour éviter de recycler les mêmes citations,
@@ -68,24 +75,40 @@ def format_last_move_for_prompt(last_move, player_moved: str) -> str:
     return f"{side} viennent de jouer : pièce {piece} de la case {fr} vers la case {to}."
 
 
-def build_user_message(board, last_move, player_moved: str) -> str:
+def _engine_section(digest: Optional[str]) -> str:
+    if not digest:
+        return ""
+    return (
+        "\n\n---\nLecture approfondie (synthèse moteur — pour t'orienter métaphoriquement, "
+        "à ne pas reciter ni nommer dans ta réponse) :\n\n"
+        f"{digest}"
+    )
+
+
+def build_user_message(
+    board,
+    last_move,
+    player_moved: str,
+    *,
+    engine_digest: Optional[str] = None,
+) -> str:
     return (
         "Voici l'état ACTUEL du plateau après ce coup (c'est la vérité à respecter, "
         "y compris pour une promotion de pion) :\n\n"
         f"{format_board_for_prompt(board)}\n\n"
         f"{format_last_move_for_prompt(last_move, player_moved)}\n\n"
-        "Base ta métaphore sur la disposition des forces sur l'échiquier et ce déplacement. Ne sois pas pompeux."
+        f"{_engine_section(engine_digest)}"
     )
 
 
-def build_user_message_opening(board) -> str:
+def build_user_message_opening(board, *, engine_digest: Optional[str] = None) -> str:
     return (
         "La partie vient de commencer entre deux joueurs côte à côte. "
         "Aucun coup n'a encore été joué.\n\n"
         "Voici la position initiale de l'échiquier (référence pour ton image intérieure du plateau) :\n\n"
         f"{format_board_for_prompt(board)}\n\n"
-        "Offre une réflexion d'ouverture : même exigence de citation philosophique nommée et attribuée, "
-        "métaphore liée à cet équilibre initial et au silence avant l'échange."
+        "Offre une réflexion d'ouverture."
+        f"{_engine_section(engine_digest)}"
     )
 
 
@@ -217,6 +240,23 @@ def _generate_sage_with_anthropic(user_text: str) -> str:
     return _assistant_text_anthropic(msg)
 
 
+def _resolve_whoseturn(
+    *,
+    opening: bool,
+    player_moved: Optional[str],
+    whoseturn: Optional[str],
+) -> str:
+    if whoseturn in ("w", "b"):
+        return whoseturn
+    if opening:
+        return "w"
+    if player_moved == "w":
+        return "b"
+    if player_moved == "b":
+        return "w"
+    return "w"
+
+
 def generate_sage_reflection(
     board: Any,
     last_move: Any = None,
@@ -224,13 +264,31 @@ def generate_sage_reflection(
     *,
     opening: bool = False,
     prior_reflections: Optional[list[str]] = None,
-) -> str:
+    whoseturn: Optional[str] = None,
+    castle_available: Optional[dict] = None,
+    include_engine: bool = True,
+    return_llm_prompt: bool = False,
+) -> Union[str, tuple[str, str]]:
+    wt = _resolve_whoseturn(
+        opening=opening, player_moved=player_moved, whoseturn=whoseturn
+    )
+    engine_digest: Optional[str] = None
+    if include_engine and not opening and isinstance(castle_available, dict):
+        engine_digest = build_stockfish_digest_for_sage(
+            board,
+            whoseturn=wt,
+            castle_available=castle_available,
+            lastmove=last_move,
+        )
+
     if opening:
-        user_text = build_user_message_opening(board)
+        user_text = build_user_message_opening(board, engine_digest=engine_digest)
     else:
         if last_move is None or player_moved not in ("w", "b"):
             raise ValueError("last_move et playerMoved (w|b) requis sauf pour opening=True")
-        user_text = build_user_message(board, last_move, player_moved)
+        user_text = build_user_message(
+            board, last_move, player_moved, engine_digest=engine_digest
+        )
 
     user_text = _append_prior_reflections_to_user_text(user_text, prior_reflections)
 
@@ -242,4 +300,7 @@ def generate_sage_reflection(
 
     if not text:
         raise RuntimeError("Réponse vide du modèle.")
-    return _sanitize_sage_plain_text(text)
+    out = _sanitize_sage_plain_text(text)
+    if return_llm_prompt:
+        return out, user_text
+    return out

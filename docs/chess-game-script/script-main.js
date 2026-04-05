@@ -266,7 +266,9 @@ document.addEventListener('click', function(clicked) {
                             requestSageReflection(
                                 playerWhoMoved,
                                 JSON.parse(JSON.stringify(curBoard)),
-                                JSON.parse(JSON.stringify(lastMove))
+                                JSON.parse(JSON.stringify(lastMove)),
+                                whoseTurn,
+                                JSON.parse(JSON.stringify(castle))
                             );
                         }
                     }
@@ -275,7 +277,9 @@ document.addEventListener('click', function(clicked) {
                             requestSageReflection(
                                 playerWhoMoved,
                                 JSON.parse(JSON.stringify(curBoard)),
-                                JSON.parse(JSON.stringify(lastMove))
+                                JSON.parse(JSON.stringify(lastMove)),
+                                whoseTurn,
+                                JSON.parse(JSON.stringify(castle))
                             );
                         }
                         if (!gameOver) {
