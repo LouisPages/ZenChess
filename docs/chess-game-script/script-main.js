@@ -289,7 +289,13 @@ document.addEventListener('click', function(clicked) {
                 }
             });
         }
-        else {      
+        else {
+            if (toMove.length === 2 && toMove[0] === i && toMove[1] === j &&
+                clicked.target.id.slice(0, 5) === 'piece' && clicked.target.id[6] === whoseTurn &&
+                dicMoves[[i, j]].length !== 0) {
+                toMove = [];
+                return;
+            }
             //fixed: Allow any piece to move if it has legal moves (filterPinnedMoves handles check restrictions)
             if ((mode === 'friend' || (mode === 'zenbot' && whoseTurn != zenBotColor)) && clicked.target.id.slice(0,5) === 'piece' && clicked.target.id[6] === whoseTurn && dicMoves[[i,j]].length != 0) {
                 document.getElementById('svg-background').classList.add('clip-board');

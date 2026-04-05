@@ -1,9 +1,15 @@
 //function designed to send moves that the bot can play so that it can choose it randomly
 async function playZenBotMove(zenBotMode) {
     let chosenMove = await getZenBotMove(zenBotMode);
-    
-    toMove = [chosenMove[0][0], chosenMove[0][1]]
-    makeMove(chosenMove[1][0], chosenMove[1][1]);
+    if (!chosenMove || !chosenMove[0] || !chosenMove[1]) {
+        return;
+    }
+
+    toMove = [chosenMove[0][0], chosenMove[0][1]];
+    const resPromise = await makeMove(chosenMove[1][0], chosenMove[1][1]);
+    if (resPromise && !promotionDone) {
+        return;
+    }
     refreshBoard();
     whoseTurn = nextPlayer(whoseTurn);
 
@@ -52,6 +58,6 @@ async function getZenBotMove(mode) {
         }
     }
     catch (error) {
-        console.log("Error : ", data.error)
+        console.log("Error : ", error);
     }
 }

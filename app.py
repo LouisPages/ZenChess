@@ -25,7 +25,7 @@ def bot_move():
         mode = data.get('mode')
         whoseturn = data.get('whoseTurn')
         castle_available = data.get('castleAvailable')
-        lastmove = data.get('lastmove')
+        lastmove = data.get('lastMove', data.get('lastmove'))
 
         if curboard:
             if mode == "random":
