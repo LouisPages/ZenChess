@@ -1,27 +1,29 @@
-"""Build prompts and call the Mistral API for the sage reflection feature."""
+"""Build prompts and call Mistral or Anthropic for the sage reflection feature."""
 import os
 import re
 from typing import Any, Optional
 
+from anthropic import Anthropic
 from mistralai.client import Mistral
+
+_DEFAULT_ANTHROPIC_MODEL = "claude-3-5-haiku-20241022"
 
 SAGE_SYSTEM_INSTRUCTION = """Tu es un sage philosophe qui observe une partie d'échecs en silence.
 Tu t'inspires de Proust, Socrate, Marc-Aurèle, Sun Tzu, Lao-Tseu, Épictète, Nietzsche, Confucius, Heidegger, Voltaire, Victor Hugo, en variant
 les philosophes convoqués au fil de la partie.
-Avant le premier coup comme après chaque coup joué, tu partages une réflexion courte (IMPORTANT : 200 caractères maximum, espace compris) qui :
+Avant le premier coup comme après chaque coup joué, tu partages une réflexion courte (IMPORTANT : 100 caractères maximum, espace compris) qui :
 - Cite TOUJOURS un concept philosophique nommé, une œuvre, ou une citation directe
   d'un de ces philosophes (en l'attribuant explicitement)
   DANS LE CAS Où UNE PHRASE EST PRéSENTé COMME UNE CITATION, LA CITATION DOIT ÊTRE EXACTE, N'INVENTE PAS !
 - Relie ce concept à la situation sur l'échiquier de façon métaphorique (potentiel initial ou mouvement selon le contexte)
 - Ne commente jamais le jeu de façon technique
 Format idéal : La citation est inséré avec fluidité et en lien avec le moment de la partie.
+
 IMPORTANT : Je n'attends pas une structure en deux temps (citation puis lien), la citation est fondue dans la réflexion,
 elle arrive naturellement, comme si le philosophe pensait à voix haute plutôt que de faire un cours. Évite à
 tout prix les formules pompeuse comme "comme l'a dit X", "comme disait Y" et autres formules comme ça.
 
-Réponds uniquement avec le texte de la réflexion, sans titre ni préambule. Les citations doivent être entre guillemets français « » ;
-n'utilise jamais d'astérisques * ni ** (ni autre mise en forme type Markdown) pour encadrer du texte.
-Le texte ne doit pas contenir d'autres caractères spéciaux sauf ponctuation usuelle.
+STYLE : Tu es un sage mais tu restes simple. Ne sois pas pompeux avec des choses compliquées. Evite d'utiliser le verbe "lover".
 
 TRÈS IMPORTANT — mémoire de la partie : le message utilisateur peut inclure, après un séparateur, la liste chronologique
 de tes réflexions déjà prononcées dans cette même partie. Tu dois t'en servir pour éviter de recycler les mêmes citations,
@@ -72,8 +74,7 @@ def build_user_message(board, last_move, player_moved: str) -> str:
         "y compris pour une promotion de pion) :\n\n"
         f"{format_board_for_prompt(board)}\n\n"
         f"{format_last_move_for_prompt(last_move, player_moved)}\n\n"
-        "Base ta métaphore sur la disposition des forces sur l'échiquier et ce déplacement, "
-        "sans nommer de cases ni de pièces de façon technique dans ta réponse."
+        "Base ta métaphore sur la disposition des forces sur l'échiquier et ce déplacement. Ne sois pas pompeux."
     )
 
 
@@ -84,8 +85,7 @@ def build_user_message_opening(board) -> str:
         "Voici la position initiale de l'échiquier (référence pour ton image intérieure du plateau) :\n\n"
         f"{format_board_for_prompt(board)}\n\n"
         "Offre une réflexion d'ouverture : même exigence de citation philosophique nommée et attribuée, "
-        "métaphore liée à cet équilibre initial et au silence avant l'échange, "
-        "sans nommer pièces ni cases de façon technique dans ta réponse."
+        "métaphore liée à cet équilibre initial et au silence avant l'échange."
     )
 
 
@@ -116,7 +116,7 @@ def _append_prior_reflections_to_user_text(
     )
 
 
-def _assistant_text(chat_response) -> str:
+def _assistant_text_mistral(chat_response) -> str:
     if not chat_response.choices:
         return ""
     msg = chat_response.choices[0].message
@@ -140,6 +140,28 @@ def _assistant_text(chat_response) -> str:
     return str(content).strip()
 
 
+def _assistant_text_anthropic(message) -> str:
+    content = getattr(message, "content", None) or []
+    parts: list[str] = []
+    for block in content:
+        text = getattr(block, "text", None)
+        if text:
+            parts.append(str(text))
+        elif isinstance(block, dict) and block.get("type") == "text":
+            parts.append(str(block.get("text") or ""))
+    return " ".join(parts).strip()
+
+
+def _sage_llm_provider() -> str:
+    raw = (os.environ.get("SAGE_LLM_PROVIDER") or "mistral").strip().lower()
+    if raw in ("mistral", "anthropic"):
+        return raw
+    raise RuntimeError(
+        "SAGE_LLM_PROVIDER doit valoir « mistral » ou « anthropic » "
+        f"(reçu : {raw!r})."
+    )
+
+
 def _sanitize_sage_plain_text(text: str) -> str:
     """Retire le bruit Markdown (*, **) que le modèle produit encore parfois malgré le system prompt."""
     t = text.replace("**", "")
@@ -151,31 +173,13 @@ def _sanitize_sage_plain_text(text: str) -> str:
     return re.sub(r"[ \t]{2,}", " ", t).strip()
 
 
-def generate_sage_reflection(
-    board: Any,
-    last_move: Any = None,
-    player_moved: Optional[str] = None,
-    *,
-    opening: bool = False,
-    prior_reflections: Optional[list[str]] = None,
-) -> str:
+def _generate_sage_with_mistral(user_text: str) -> str:
     api_key = (os.environ.get("MISTRAL_API_KEY") or "").strip()
     if not api_key:
         raise RuntimeError(
             "Variable d'environnement MISTRAL_API_KEY manquante (définir dans .env)."
         )
-
     model_name = (os.environ.get("MISTRAL_MODEL") or "").strip() or "mistral-small-latest"
-
-    if opening:
-        user_text = build_user_message_opening(board)
-    else:
-        if last_move is None or player_moved not in ("w", "b"):
-            raise ValueError("last_move et playerMoved (w|b) requis sauf pour opening=True")
-        user_text = build_user_message(board, last_move, player_moved)
-
-    user_text = _append_prior_reflections_to_user_text(user_text, prior_reflections)
-
     client = Mistral(api_key=api_key)
     try:
         chat_response = client.chat.complete(
@@ -189,8 +193,53 @@ def generate_sage_reflection(
         )
     except Exception as e:
         raise RuntimeError(f"Erreur API Mistral : {e}") from e
+    return _assistant_text_mistral(chat_response)
 
-    text = _assistant_text(chat_response)
+
+def _generate_sage_with_anthropic(user_text: str) -> str:
+    api_key = (os.environ.get("ANTHROPIC_API_KEY") or "").strip()
+    if not api_key:
+        raise RuntimeError(
+            "Variable d'environnement ANTHROPIC_API_KEY manquante (définir dans .env)."
+        )
+    model_name = (os.environ.get("ANTHROPIC_MODEL") or "").strip() or _DEFAULT_ANTHROPIC_MODEL
+    client = Anthropic(api_key=api_key)
+    try:
+        msg = client.messages.create(
+            model=model_name,
+            max_tokens=512,
+            system=SAGE_SYSTEM_INSTRUCTION,
+            messages=[{"role": "user", "content": user_text}],
+            temperature=0.85,
+        )
+    except Exception as e:
+        raise RuntimeError(f"Erreur API Anthropic : {e}") from e
+    return _assistant_text_anthropic(msg)
+
+
+def generate_sage_reflection(
+    board: Any,
+    last_move: Any = None,
+    player_moved: Optional[str] = None,
+    *,
+    opening: bool = False,
+    prior_reflections: Optional[list[str]] = None,
+) -> str:
+    if opening:
+        user_text = build_user_message_opening(board)
+    else:
+        if last_move is None or player_moved not in ("w", "b"):
+            raise ValueError("last_move et playerMoved (w|b) requis sauf pour opening=True")
+        user_text = build_user_message(board, last_move, player_moved)
+
+    user_text = _append_prior_reflections_to_user_text(user_text, prior_reflections)
+
+    provider = _sage_llm_provider()
+    if provider == "anthropic":
+        text = _generate_sage_with_anthropic(user_text)
+    else:
+        text = _generate_sage_with_mistral(user_text)
+
     if not text:
         raise RuntimeError("Réponse vide du modèle.")
     return _sanitize_sage_plain_text(text)

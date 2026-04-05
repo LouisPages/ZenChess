@@ -344,6 +344,18 @@ function possibleMoves() {
                 }
             }
 
+            else if (curBoard[i][j][0] === '♚') {
+                let kingAttacks = [[i+1,j], [i-1,j], [i,j+1], [i,j-1],
+                                   [i+1,j+1], [i+1,j-1], [i-1,j+1], [i-1,j-1]];
+                for (k = 0; k < kingAttacks.length; k++) {
+                    let ni = kingAttacks[k][0];
+                    let nj = kingAttacks[k][1];
+                    if (ni >= 0 && ni < 8 && nj >= 0 && nj < 8) {
+                        disallowKing.push([ni,nj]);
+                    }
+                }
+            }
+
             dicMoves[[i,j]] = moves;
             disallowKingSquare[[i,j]] = disallowKing;
         }
